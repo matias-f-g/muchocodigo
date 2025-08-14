@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newton estaría orgulloso - MUCHO CÓDIGO</title>
+    <meta name="description" content="Simulaciones gravitatorias inspiradas en Newton usando p5.js">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+</head>
+<body>
+    <a href="desafios.html" class="back-link">← Volver</a>
+    
+    <div class="container">
+        <h1>Newton estaría orgulloso</h1>
+        
+        <!-- PRIMERA SIMULACIÓN -->
+        <div class="canvas-container">
+            <h2>NEWTON WOULD BE PROUD</h2>
+            <button id="startBtn1" class="btn" style="margin-bottom: 20px; padding: 10px 20px; max-width: 200px; margin: 0 auto 20px auto;">Iniciar simulación</button>
+            <div id="newtonCanvas1"></div>
+        </div>
+
+        <div class="code-section">
+            <h2 class="code-title">El código</h2>
+            <div class="code-content">
+                <div class="code-block"><span class="keyword">let</span> walker;
+
+<span class="keyword">function</span> <span class="function">setup</span>() {
+    <span class="function">createCanvas</span>(<span class="number">680</span>, <span class="number">440</span>);
+    <span class="function">background</span>(<span class="number">30</span>);
+    walker = <span class="keyword">new</span> <span class="class-name">Walker</span>();
+    <span class="function">smooth</span>();
+}
+
+<span class="keyword">function</span> <span class="function">draw</span>() {
+    <span class="function">background</span>(<span class="number">0</span>, <span class="number">3</span>);
+    <span class="function">fill</span>(<span class="number">255</span>, <span class="number">255</span>, <span class="number">0</span>);
+    <span class="function">circle</span>(width/<span class="number">2</span>,height/<span class="number">2</span>,<span class="number">15</span>);
+    walker.<span class="property">show</span>();
+    walker.<span class="property">update</span>();
+    walker.<span class="property">checkEdges</span>();
+}
+
+<span class="keyword">class</span> <span class="class-name">Walker</span> {
+    <span class="function">constructor</span>() {
+        <span class="this">this</span>.<span class="property">position</span> = <span class="function">createVector</span>(width/<span class="number">2</span>, height/<span class="number">2</span>);
+        <span class="this">this</span>.<span class="property">velocity</span> = <span class="function">createVector</span>(<span class="number">0</span>, <span class="number">0</span>);
+        <span class="this">this</span>.<span class="property">acceleration</span> = <span class="function">createVector</span>(<span class="number">0</span>, <span class="number">0</span>);
+    }
+    
+    <span class="function">show</span>() {
+        <span class="function">noStroke</span>();
+        <span class="function">fill</span>(<span class="number">50</span>,<span class="number">120</span>,<span class="number">255</span>);
+        <span class="function">circle</span>(<span class="this">this</span>.<span class="property">position</span>.x, <span class="this">this</span>.<span class="property">position</span>.y, <span class="number">7</span>);
+    }
+    
+    <span class="function">update</span>() {
+        <span class="keyword">let</span> mouse = <span class="function">createVector</span>(mouseX, mouseY);
+        <span class="keyword">let</span> dir = p5.<span class="class-name">Vector</span>.<span class="function">sub</span>(mouse, <span class="this">this</span>.<span class="property">position</span>);
+        <span class="keyword">let</span> distM = dir.<span class="function">mag</span>();
+        dir.<span class="function">setMag</span>(<span class="number">1</span>/distM);
+        <span class="this">this</span>.<span class="property">acceleration</span> = dir;
+        <span class="this">this</span>.<span class="property">velocity</span>.<span class="function">add</span>(<span class="this">this</span>.<span class="property">acceleration</span>);
+        <span class="this">this</span>.<span class="property">velocity</span>.<span class="function">limit</span>(<span class="number">5</span>);
+        <span class="this">this</span>.<span class="property">position</span>.<span class="function">add</span>(<span class="this">this</span>.<span class="property">velocity</span>);
+    }
+    
+    <span class="function">checkEdges</span>() {
+        <span class="keyword">if</span> (<span class="this">this</span>.<span class="property">position</span>.x > width) {
+            <span class="this">this</span>.<span class="property">position</span>.x = <span class="number">0</span>;
+        } <span class="keyword">else if</span> (<span class="this">this</span>.<span class="property">position</span>.x < <span class="number">0</span>) {
+            <span class="this">this</span>.<span class="property">position</span>.x = width;
+        }
+        <span class="keyword">if</span> (<span class="this">this</span>.<span class="property">position</span>.y > height) {
+            <span class="this">this</span>.<span class="property">position</span>.y = <span class="number">0</span>;
+        } <span class="keyword">else if</span> (<span class="this">this</span>.<span class="property">position</span>.y < <span class="number">0</span>) {
+            <span class="this">this</span>.<span class="property">position</span>.y = height;
+        }
+    }
+}</div>
+            </div>
+        </div>
+
+        <!-- SEGUNDA SIMULACIÓN -->
+        <div class="second-canvas-container">
+            <h2>NEWTON WOULD BE FASCINATED</h2>
+            <button id="startBtn2" class="btn" style="margin-bottom: 20px; padding: 10px 20px; max-width: 200px; margin: 0 auto 20px auto;">Iniciar simulación</button>
+            <div id="newtonCanvas2"></div>
+        </div>
+
+        <div class="code-section">
+            <h2 class="code-title">El código</h2>
+            <div class="code-content">
+                <div class="code-block"><span class="keyword">let</span> bodies = [];
+<span class="keyword">let</span> attractor;
+
+<span class="keyword">function</span> <span class="function">setup</span>() {
+    <span class="function">createCanvas</span>(<span class="number">800</span>, <span class="number">600</span>);
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">32</span>; i++) {
+        bodies[i] = <span class="keyword">new</span> <span class="class-name">Body</span>(width/<span class="number">2</span>, (<span class="number">10</span> + (i * <span class="number">4</span>)), <span class="number">2</span>, (<span class="number">4</span> + (i/<span class="number">32</span>)), <span class="number">0</span>);
+    }
+    attractor = <span class="keyword">new</span> <span class="class-name">Attractor</span>(width/<span class="number">2</span>, height/<span class="number">2</span>, <span class="number">256</span>);
+}
+
+<span class="keyword">function</span> <span class="function">draw</span>() {
+    <span class="function">background</span>(<span class="number">32</span>, <span class="number">64</span>);
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < bodies.length; i++) {
+        <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j < bodies.length; j++) {
+            <span class="keyword">if</span> (i !== j) {
+                <span class="keyword">let</span> force = bodies[j].<span class="function">attract</span>(bodies[i]);
+                bodies[i].<span class="function">applyForce</span>(force);
+            }
+        }
+        <span class="keyword">let</span> force = attractor.<span class="function">attract</span>(bodies[i]);
+        bodies[i].<span class="function">applyForce</span>(force);
+        bodies[i].<span class="function">update</span>();
+        bodies[i].<span class="function">show</span>();
+    }
+}
+
+<span class="keyword">class</span> <span class="class-name">Attractor</span> {
+    <span class="function">constructor</span>(x, y, m) {
+        <span class="this">this</span>.<span class="property">position</span> = <span class="function">createVector</span>(x, y);
+        <span class="this">this</span>.<span class="property">mass</span> = m;
+    }
+    
+    <span class="function">attract</span>(mover) {
+        <span class="keyword">let</span> force = p5.<span class="class-name">Vector</span>.<span class="function">sub</span>(<span class="this">this</span>.<span class="property">position</span>, mover.<span class="property">position</span>);
+        <span class="keyword">let</span> distance = force.<span class="function">mag</span>();
+        distance = <span class="function">constrain</span>(distance, <span class="number">5</span>, <span class="number">25</span>);
+        <span class="keyword">let</span> strength = (<span class="this">this</span>.<span class="property">mass</span> * mover.<span class="property">mass</span>) / (distance * distance);
+        force.<span class="function">setMag</span>(strength);
+        <span class="keyword">return</span> force;
+    }
+}
+
+<span class="keyword">class</span> <span class="class-name">Body</span> {
+    <span class="function">constructor</span>(x, y, mass, accX, accY) {
+        <span class="this">this</span>.<span class="property">mass</span> = mass;
+        <span class="this">this</span>.<span class="property">position</span> = <span class="function">createVector</span>(x, y);
+        <span class="this">this</span>.<span class="property">velocity</span> = <span class="function">createVector</span>(<span class="number">0</span>, <span class="number">0</span>);
+        <span class="this">this</span>.<span class="property">acceleration</span> = <span class="function">createVector</span>(accX, accY);
+        <span class="this">this</span>.<span class="property">rC</span> = <span class="function">random</span>(<span class="number">100</span>, <span class="number">255</span>);
+        <span class="this">this</span>.<span class="property">gC</span> = <span class="function">random</span>(<span class="number">100</span>, <span class="number">255</span>);
+        <span class="this">this</span>.<span class="property">bC</span> = <span class="function">random</span>(<span class="number">100</span>, <span class="number">255</span>);
+    }
+    
+    <span class="function">applyForce</span>(force) {
+        <span class="keyword">let</span> f = p5.<span class="class-name">Vector</span>.<span class="function">div</span>(force, <span class="this">this</span>.<span class="property">mass</span>);
+        <span class="this">this</span>.<span class="property">acceleration</span>.<span class="function">add</span>(f);
+    }
+    
+    <span class="function">update</span>() {
+        <span class="this">this</span>.<span class="property">velocity</span>.<span class="function">add</span>(<span class="this">this</span>.<span class="property">acceleration</span>);
+        <span class="this">this</span>.<span class="property">position</span>.<span class="function">add</span>(<span class="this">this</span>.<span class="property">velocity</span>);
+        <span class="this">this</span>.<span class="property">acceleration</span>.<span class="function">mult</span>(<span class="number">0</span>);
+    }
+    
+    <span class="function">attract</span>(body) {
+        <span class="keyword">let</span> force = p5.<span class="class-name">Vector</span>.<span class="function">sub</span>(<span class="this">this</span>.<span class="property">position</span>, body.<span class="property">position</span>);
+        <span class="keyword">let</span> d = <span class="function">constrain</span>(force.<span class="function">mag</span>(), <span class="number">32</span>, <span class="number">256</span>);
+        <span class="keyword">let</span> strength = ((<span class="this">this</span>.<span class="property">mass</span> * body.<span class="property">mass</span>)) / (d * d);
+        force.<span class="function">setMag</span>(strength);
+        <span class="keyword">return</span> force;
+    }
+    
+    <span class="function">show</span>() {
+        <span class="function">noStroke</span>();
+        <span class="function">fill</span>(<span class="this">this</span>.<span class="property">rC</span>, <span class="this">this</span>.<span class="property">gC</span>, <span class="this">this</span>.<span class="property">bC</span>);
+        <span class="function">circle</span>(<span class="this">this</span>.<span class="property">position</span>.x, <span class="this">this</span>.<span class="property">position</span>.y, <span class="this">this</span>.<span class="property">mass</span> * <span class="number">6</span>);
+    }
+}</div>
+            </div>
+        </div>
+
+        <div class="explanation-section">
+            <h2>¿Qué estamos viendo?</h2>
+            <p>Esto es una pequeña muestra de lo que te permite crear el libro <a href="https://natureofcode.com/" target="_blank" rel="noopener noreferrer"><i>The Nature of Code: Simulating Natural Systems with JavaScript</i></a> con solo haber leído los capítulos 1 y 2.</p>
+            
+            <p>Aunque de una manera artificial y fantasiosa, pero visualmente interesante, los programas anteriores intentan simular un poco cómo actúa la fuerza gravitatoria sobre los cuerpos celestes.</p>
+            
+            <p><strong>El desafío es que hagas tu propia versión, ya sea más realista, o más ficticia</strong>. Vos fijate.</p>
+        </div>
+    </div>
+
+    <script>
+        // Variables para ambas simulaciones
+        let sketch1, sketch2;
+        let simulation1Running = false;
+        let simulation2Running = false;
+
+        // Primera simulación
+        let walker1;
+        const s1 = (p) => {
+            p.setup = function() {
+                let canvas = p.createCanvas(680, 440);
+                canvas.parent('newtonCanvas1');
+                p.background(0);
+                walker1 = new Walker1(p);
+            };
+
+            p.draw = function() {
+                if (!simulation1Running) {
+                    p.background(0);
+                    return;
+                }
+                p.background(0, 3);
+                p.fill(255, 255, 0);
+                p.circle(p.width/2, p.height/2, 15);
+                walker1.show();
+                walker1.update();
+                walker1.checkEdges();
+            };
+        };
+
+        class Walker1 {
+            constructor(p) {
+                this.p = p;
+                this.position = p.createVector(p.width/2, p.height/2);
+                this.velocity = p.createVector(0, 0);
+                this.acceleration = p.createVector(0, 0);
+            }
+            
+            show() {
+                this.p.noStroke();
+                this.p.fill(50, 120, 255);
+                this.p.circle(this.position.x, this.position.y, 7);
+            }
+            
+            update() {
+                let mouse = this.p.createVector(this.p.mouseX, this.p.mouseY);
+                let dir = p5.Vector.sub(mouse, this.position);
+                let distM = dir.mag();
+                if (distM > 0) {
+                    dir.setMag(1/distM);
+                    this.acceleration = dir;
+                    this.velocity.add(this.acceleration);
+                    this.velocity.limit(5);
+                    this.position.add(this.velocity);
+                }
+            }
+            
+            checkEdges() {
+                if (this.position.x > this.p.width) {
+                    this.position.x = 0;
+                } else if (this.position.x < 0) {
+                    this.position.x = this.p.width;
+                }
+                if (this.position.y > this.p.height) {
+                    this.position.y = 0;
+                } else if (this.position.y < 0) {
+                    this.position.y = this.p.height;
+                }
+            }
+        }
+
+        // Segunda simulación
+        let bodies2 = [];
+        let attractor2;
+        const s2 = (p) => {
+            p.setup = function() {
+                let canvas = p.createCanvas(800, 600);
+                canvas.parent('newtonCanvas2');
+                p.background(0);
+                
+                for (let i = 0; i < 32; i++) {
+                    bodies2[i] = new Body2(p, p.width/2, (10 + (i * 4)), 2, (4 + (i/32)), 0);
+                }
+                attractor2 = new Attractor2(p, p.width/2, p.height/2, 256);
+            };
+
+            p.draw = function() {
+                if (!simulation2Running) {
+                    p.background(0);
+                    return;
+                }
+                p.background(32, 64);
+                for (let i = 0; i < bodies2.length; i++) {
+                    for (let j = 0; j < bodies2.length; j++) {
+                        if (i !== j) {
+                            let force = bodies2[j].attract(bodies2[i]);
+                            bodies2[i].applyForce(force);
+                        }
+                    }
+                    let force = attractor2.attract(bodies2[i]);
+                    bodies2[i].applyForce(force);
+                    bodies2[i].update();
+                    bodies2[i].show();
+                }
+            };
+        };
+
+        class Attractor2 {
+            constructor(p, x, y, m) {
+                this.p = p;
+                this.position = p.createVector(x, y);
+                this.mass = m;
+            }
+            
+            attract(mover) {
+                let force = p5.Vector.sub(this.position, mover.position);
+                let distance = force.mag();
+                distance = this.p.constrain(distance, 5, 25);
+                let strength = (this.mass * mover.mass) / (distance * distance);
+                force.setMag(strength);
+                return force;
+            }
+        }
+
+        class Body2 {
+            constructor(p, x, y, mass, accX, accY) {
+                this.p = p;
+                this.mass = mass;
+                this.position = p.createVector(x, y);
+                this.velocity = p.createVector(0, 0);
+                this.acceleration = p.createVector(accX, accY);
+                this.rC = p.random(100, 255);
+                this.gC = p.random(100, 255);
+                this.bC = p.random(100, 255);
+            }
+            
+            applyForce(force) {
+                let f = p5.Vector.div(force, this.mass);
+                this.acceleration.add(f);
+            }
+            
+            update() {
+                this.velocity.add(this.acceleration);
+                this.position.add(this.velocity);
+                this.acceleration.mult(0);
+            }
+            
+            attract(body) {
+                let force = p5.Vector.sub(this.position, body.position);
+                let d = this.p.constrain(force.mag(), 32, 256);
+                let strength = ((this.mass * body.mass)) / (d * d);
+                force.setMag(strength);
+                return force;
+            }
+            
+            show() {
+                this.p.noStroke();
+                this.p.fill(this.rC, this.gC, this.bC);
+                this.p.circle(this.position.x, this.position.y, this.mass * 6);
+            }
+        }
+
+        // Inicializar sketches
+        sketch1 = new p5(s1);
+        sketch2 = new p5(s2);
+
+        // Event listeners para botones
+        document.getElementById('startBtn1').addEventListener('click', function() {
+            if (!simulation1Running) {
+                simulation1Running = true;
+                this.textContent = 'Detener simulación';
+                walker1 = new Walker1(sketch1);
+            } else {
+                simulation1Running = false;
+                this.textContent = 'Iniciar simulación';
+            }
+        });
+
+        document.getElementById('startBtn2').addEventListener('click', function() {
+            if (!simulation2Running) {
+                simulation2Running = true;
+                this.textContent = 'Detener simulación';
+                bodies2 = [];
+                for (let i = 0; i < 32; i++) {
+                    bodies2[i] = new Body2(sketch2, sketch2.width/2, (10 + (i * 4)), 2, (4 + (i/32)), 0);
+                }
+                attractor2 = new Attractor2(sketch2, sketch2.width/2, sketch2.height/2, 256);
+            } else {
+                simulation2Running = false;
+                this.textContent = 'Iniciar simulación';
+            }
+        });
+    </script>
+</body>
+</html>

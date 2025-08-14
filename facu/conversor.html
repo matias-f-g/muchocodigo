@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traductor decimal-binario - MUCHO CÓDIGO</title>
+    <meta name="description" content="Convertí entre binario y decimal con todos los sistemas de representación">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Estilos específicos solo para este conversor */
+        .bits-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .bits-input input {
+            width: 80px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        /* Responsive específico para bits input */
+        @media (max-width: 768px) {
+            .bits-input {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .bits-input input {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="facu.html" class="back-link">← Volver</a>
+    
+    <div class="container">
+        <h1>Traductor binario &hArr; decimal</h1>
+        <!-- PARTE 1: Binario a Decimal -->
+        <section class="converter-section">
+            <h2 class="converter-title">Binario → Decimal</h2>
+            <div class="converter-content">
+                <div class="input-side">
+                    <div class="input-group">
+                        <label for="binaryInput">Ingresá tu número binario:</label>
+                        <input type="text" id="binaryInput" placeholder="Ej: 1011001" pattern="[01]*">
+                    </div>
+                    <button class="convert-btn" onclick="convertBinaryToDecimal()">Convertir</button>
+                </div>
+                
+                <div class="results-side">
+                    <div id="binaryResults" class="results-container">
+                        <div class="result-item">
+                            <div class="result-label">Binario sin signo (BSS):</div>
+                            <div class="result-value" id="ubnResult">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Binario con signo (BCS):</div>
+                            <div class="result-value" id="sbnResult">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Complemento a 1 (Ca1):</div>
+                            <div class="result-value" id="oneResult">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Complemento a 2 (Ca2):</div>
+                            <div class="result-value" id="twoResult">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Exceso con 2<sup>n-1</sup> (Ex2):</div>
+                            <div class="result-value" id="offsetResult">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARTE 2: Decimal a Binario -->
+        <section class="converter-section">
+            <h2 class="converter-title">Decimal → Binario</h2>
+            <div class="converter-content">
+                <div class="input-side">
+                    <div class="input-group">
+                        <div class="bits-input">
+                            <label for="bitsInput">Cantidad de bits:</label>
+                            <input type="number" id="bitsInput" min="1" max="32" value="8">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="decimalInput">Ingresá tu número decimal:</label>
+                        <input type="text" id="decimalInput" placeholder="Ej: 37">
+                    </div>
+                    <button class="convert-btn" onclick="convertDecimalToBinary()">Convertir</button>
+                </div>
+                
+                <div class="results-side">
+                    <div id="decimalResults" class="results-container">
+                        <div class="result-item">
+                            <div class="result-label">Binario sin signo (BSS):</div>
+                            <div class="result-value" id="ubnDecResult">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Binario con signo (BCS):</div>
+                            <div class="result-value" id="sbnDecResult">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Complemento a 1 (Ca1):</div>
+                            <div class="result-value" id="oneDecResult">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Complemento a 2 (Ca2):</div>
+                            <div class="result-value" id="twoDecResult">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Exceso con 2<sup>n-1</sup> (Ex2):</div>
+                            <div class="result-value" id="offsetDecResult">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARTE 3: Explicación -->
+        <section class="explanation-section">
+            <h2>¿Por qué hice este programa?</h2>
+            
+            <p>En los prácticos de Organización de computadoras nos la pasamos interpretando y representando números binarios en distintos sistemas de representación. (Si no sabés de lo que estoy hablando, podés verlo en <a href="resumenes.html">Resúmenes</a>).</p>
+
+            <p>Y está todo bien: aprendemos a manejar distintos sistemas de representación, y después de un par de semanas parecemos calculadoras humanas. Pero capaz eso no significa que hayamos entendido bien qué estábamos haciendo, ni cuáles son las conexiones entre los distintos sistemas. Y además, es un embole traducir tantos unos y ceros.</p>
+
+            <p>Por eso dije: ya fue, si en CADP estamos viendo Pascal, ¿por qué no hacer un programa que se encargue del trabajo pesado? Así que me puse a codear la técnica que usamos cuando trabajamos con lápiz y papel para pasar de decimal a binario (y viceversa). Y funcionó. </p>
+            
+            <p>Obviamente, si vas a usar estos programas, te recomiendo que los uses principalmente para corroborar los resultados, no para resolver todos los ejercicios de la Práctica 1. Por un lado, porque si la compu hace todo, vos no estarías aprendiendo mucho. Y por otro lado, porque cuando tengas que rendir el examen, si no practicaste se te va a complicar, ya que —al menos en la UNLP— ni siquiera te permiten usar la calculadora.</p>
+
+            <p>Ah, y volviendo al tema anterior: el programa funcionó, pero Pascal no se lleva muy bien con el internet, así que para poder publicarlo de esta manera, lo tuve que adaptar a HTML y JavaScript (tarea que —sin dudarlo dos segundos— le confié a la IA). Pero si te interesa el programa original, <a href="../pas/binary-translator.pas" download>acá te dejo el archivo</a>. Y si preferís el bajo nivel, <a href="../asm/de-char-a-bss.asm" download>acá hay un mini traductor</a> hecho para el <a href="https://vonsim.github.io/" target="_blank" rel="noopener noreferrer">VonSim</a>.</p>
+
+            <p><strong>Los desafíos son: ¿te animás a hacer tu propia versión? ¿Se te ocurre otra manera de hacerlo? ¿Hay algún caso especial que no esté contemplado en estos traductores? ¿Cuáles son sus límites?</strong></p>
+        </section>
+    </div>
+    
+    <script src="../js/common-utils.js"></script>
+    <script src="../js/conversor.js"></script>
+</body>
+</html>

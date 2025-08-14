@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Solucionador de sudokus - MUCHO CÓDIGO</title>
+    <meta name="description" content="Resuelve sudokus usando algoritmos básicos" />
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <a href="desafios.html" class="back-link">← Volver</a>
+    
+    <div class="container">
+        <h1>SUDOKU SOLVER 3000</h1>
+        
+        <div class="converter-section">
+            <h2 class="converter-title">SUDOKU SOLVER 3000</h2>
+            <div class="converter-content">
+                <div class="input-side">
+                    <div class="input-group">
+                        <label for="sudokuInput">Ingresá los números del sudoku en una sola línea de 81 dígitos. Si hay una casilla vacía, poné 0. Comprobá que no queden espacios.</label>
+                        <input type="text" id="sudokuInput" placeholder="5300700..." maxlength="81" pattern="[0-9]*">
+                    </div>
+                    
+                    <div style="margin: 20px 0; padding: 15px; background-color: var(--bg-darker); border: 1px solid var(--border-gray);">
+                        <div style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 10px;">Ejemplo:</div>
+                        <div style="color: var(--text-light); font-family: 'Courier New', monospace; word-break: break-all; line-height: 1.4;">
+                            530070000600195000098000060800060003400803001700020006060000280000419005000080079
+                        </div>
+                    </div>
+                    
+                    <button class="convert-btn" id="solveBtn">Resolver Sudoku</button>
+                </div>
+                
+                <div class="results-side">
+                    <div id="sudokuResults" class="results-container" style="max-height: 500px; overflow-y: auto;">
+                        <div style="color: var(--text-gray); font-style: italic; text-align: center; padding: 20px;">
+                            Ingresá los números del sudoku para resolverlo
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin: 20px 0; padding: 15px; background-color: var(--bg-darker); border: 1px solid var(--border-gray);">
+            <div style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 10px;">Otros ejemplos de prueba:</div>
+            <div style="color: var(--text-light); font-family: 'Courier New', monospace; font-size: 0.96rem; word-break: break-all; line-height: 1.4;">
+                060104050008305600200000001800407006006000300700901004500000002007206900040508070
+                <br><br>
+                004096050930705000010000000301050040760084031009000000000001000073420100040008960
+            </div>
+        </div>
+
+        <div class="explanation-section">
+            <h2>¿Por qué hice este programa?</h2>
+            <p>Un día estaba charlando con una amiga y me contó que en su tiempo libre estaba jugando al sudoku. Y por alguna razón, pensé: ¿Pascal podrá resolverlos?</p>
+            <p>Así que volví a mirar algunos sudokus para recordarme a mí mismo qué estrategia usaba, y traté de plasmar ese algoritmo en un programa. No sé mucho de sudokus, pero me imagino que es la estrategia más básica que hay.</p>
+            <p>Después de mucho ensayo y error, cuando ya me creía perdido en una selva de arrays, finalmente funcionó.</p>
+            <p>Por supuesto que solamente puede resolver los sudokus de nivel fácil. Cuando es difícil y no lo logra, te avisa que no se pudo completar ni con 9000 iteraciones.</p>
+            <p>Después me puse a mirar en Wikipedia y parece que ya se estudiaron millones de algoritmos que hacen estas cosas, tanto para crearlos como para resolverlos.</p>
+            <p>Así que bueno, ahí hay <strong>un gran desafío: avanzar hacia un algoritmo que pueda resolver sudokus más difíciles</strong> (sin copiarse de los algoritmos que ya existen, obvio, si no pierde un poco la gracia).</p>
+            <p>Que la fuerza te acompañe.</p>
+        </div>
+    </div>
+
+    <footer class="contact">
+        <p>Si te interesa el archivo original hecho en Pascal, podés <a href="../pas/sudokusolver.pas" download>descargarlo aquí mismo</a>.</p>
+    </footer>
+
+    <script src="../js/sudokusolver.js"></script>
+</body>
+</html>

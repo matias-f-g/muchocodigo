@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gauss camina! - MUCHO CÓDIGO</title>
+    <meta name="description" content="Un walker que usa distribución gaussiana">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+</head>
+<body>
+    <a href="desafios.html" class="back-link">← Volver</a>
+    
+    <div class="container">
+        <h1>Gauss camina!</h1>
+        
+        <div class="canvas-container">
+            <h2>Walker gaussiano en acción</h2>
+            <div id="gaussCanvas"></div>
+        </div>
+
+        <div class="code-section">
+            <h2 class="code-title">El código</h2>
+            <div class="code-content">
+                <div class="code-block"><span class="keyword">let</span> walker;
+
+<span class="keyword">function</span> <span class="function">setup</span>() {
+	<span class="function">createCanvas</span>(<span class="number">600</span>, <span class="number">400</span>);
+	walker = <span class="keyword">new</span> <span class="class-name">Walker</span>();
+	<span class="function">smooth</span>();
+}
+
+<span class="keyword">function</span> <span class="function">draw</span>() {
+	<span class="function">background</span>(<span class="number">0</span>, <span class="number">10</span>);
+	walker.<span class="property">show</span>();
+	walker.<span class="property">step</span>();
+}
+
+<span class="keyword">class</span> <span class="class-name">Walker</span> {
+	<span class="function">constructor</span>() {
+		<span class="this">this</span>.<span class="property">x</span> = width/<span class="number">2</span>;
+		<span class="this">this</span>.<span class="property">y</span> = height/<span class="number">2</span>;
+	}
+	
+	<span class="function">show</span>() {
+		<span class="function">noStroke</span>();
+		<span class="function">fill</span>(<span class="number">255</span>, <span class="number">150</span>, <span class="number">50</span>);
+		<span class="function">circle</span>(<span class="this">this</span>.<span class="property">x</span>, <span class="this">this</span>.<span class="property">y</span>, <span class="number">5</span>);
+	}
+	
+	<span class="function">step</span>() {
+		<span class="keyword">let</span> movex = <span class="function">randomGaussian</span>();
+		<span class="keyword">let</span> movey = <span class="function">randomGaussian</span>();
+		<span class="this">this</span>.<span class="property">x</span> += movex;
+		<span class="this">this</span>.<span class="property">y</span> += movey;
+	}
+}</div>
+            </div>
+        </div>
+
+        <div class="explanation-section">
+            <h2>¿Por qué hice este programa?</h2>
+            <p>Un amigo mío, experto en Processing, me recomendó el libro <a href="https://natureofcode.com/" target="_blank" rel="noopener noreferrer"><i>The Nature of Code: Simulating Natural Systems with JavaScript</i></a>, una maravilla visual que te enseña a representar fenómenos de la naturaleza mediante p5.js (una biblioteca de JavaScript).</p>
+            
+            <p>Uno de los primeros ejercicios que tiene, consiste en hacer un <i>walker</i> que se mueve al son del <i>Gaussian random walk</i>. Si esto te suena a chino mandarín con lunfardo cantonés, toda la data que necesitás está en el Capítulo 0.</p>
+            
+            <p>El libro, como te decía, es increíble. Aunque no pienses leerlo, te recomiendo que lo mires.</p>
+
+            <p>Además, programar con p5.js es súper accesible: en poco tiempo avanzás un montón, y podés hacer todo online desde el <a href="https://editor.p5js.org/" target="_blank" rel="noopener noreferrer">editor de p5.js</a>.</p>
+
+            <p><strong>El desafío es, naturalmente, que te inventes tu propio <i>walker</i></strong>.</p>
+        </div>
+    </div>
+
+    <script>
+        let walker;
+
+        function setup() {
+            let canvas = createCanvas(600, 400);
+            canvas.parent('gaussCanvas');
+            walker = new Walker();
+        }
+
+        function draw() {
+            background(0, 10);
+            walker.show();
+            walker.step();
+        }
+
+        class Walker {
+            constructor() {
+                this.x = width/2;
+                this.y = height/2;
+            }
+            
+            show() {
+                noStroke();
+                fill(255, 150, 50);
+                circle(this.x, this.y, 5);
+            }
+            
+            step() {
+                let movex = randomGaussian();
+                let movey = randomGaussian();
+                this.x += movex;
+                this.y += movey;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de personalidad para programadores - MUCHO CÓDIGO</title>
+    <meta name="description" content="Descubre qué estereotipo de programador eres">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .subtitle {
+            text-align: center;
+        }
+
+        /* Estilos para que el footer quede abajo solo en esta página */
+        html, body {
+            height: 100%;
+        }
+        body.testpage {
+            display: flex;
+            flex-direction: column;
+        }
+        body.testpage main {
+            flex: 1;
+        }
+        body.testpage .contact {
+            padding: 1rem 1.5rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body class="testpage">
+    <a href="desafios.html" class="back-link">← Volver</a>
+    
+    <main class="container">
+        <h1>¿Qué {estereo}tipo de programador/a/e sos?</h1>
+        <div class="subtitle">Doce preguntas booleanas, solo una conclusión</div>
+
+        <div id="test-container">
+            <!-- Pantalla inicial -->
+            <div id="start-screen" class="test-screen active">
+                <button id="start-btn" class="convert-btn">¡Empezar el test!</button>
+            </div>
+
+            <!-- Pantalla de preguntas -->
+            <div id="question-screen" class="test-screen">
+                <div class="converter-section">
+                    <h2 id="question-title" class="converter-title">Pregunta 1/12</h2>
+                    <div class="converter-content">
+                        <div class="input-side">
+                            <p id="question-text" class="text-content"></p>
+                            <button id="yes-btn" class="convert-btn">Sí</button>
+                            <button id="no-btn" class="convert-btn">No</button>
+                        </div>
+                        <div class="results-side">
+                            <div class="result-item">
+                                <div class="result-label">Progreso</div>
+                                <div id="progress-bar" class="progress-container">
+                                    <div id="progress-fill" class="progress-fill"></div>
+                                </div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-label">Pregunta actual</div>
+                                <div id="current-question" class="result-value">1 de 12</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pantalla de resultados -->
+            <div id="result-screen" class="test-screen">
+                <div class="converter-section">
+                    <h2 class="converter-title">¡Tu resultado!</h2>
+                    <div class="converter-content">
+                        <div class="input-side">
+                            <h3 id="result-type" class="result-type-title"></h3>
+                            <p id="result-description" class="text-content"></p>
+                            <button id="restart-btn" class="convert-btn">Hacer el test de nuevo</button>
+                        </div>
+                        <div class="results-side">
+                            <div class="result-item">
+                                <div class="result-label">Tu estereotipo</div>
+                                <div id="final-type" class="result-value"></div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-label">Grado de certeza</div>
+                                <div id="final-score" class="result-value"></div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-label">¿Fuente?</div>
+                                <div id="final-source">
+                                    <a href="https://youtu.be/_k-F-MMvQV4?si=CzbzPX7umnFNRofO" target="_blank" rel="noopener noreferrer">
+                                        10 Programmer Stereotypes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        /* Ocultar todas las pantallas excepto la activa */
+        .test-screen {
+            display: none;
+        }
+        .test-screen.active {
+            display: block;
+        }
+        #start-screen {
+            text-align: center;
+            margin: 4rem 0;
+        }
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: var(--bg-dark);
+            border: 2px solid var(--border-medium);
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-green);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: var(--glow-small);
+        }
+        .result-type-title {
+            color: var(--primary-green);
+            text-shadow: var(--glow-medium);
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        #question-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .convert-btn {
+            margin-bottom: 1rem;
+        }
+        .convert-btn:last-of-type {
+            margin-bottom: 0;
+        }
+    </style>
+
+    <footer class="contact">
+        <p><strong>El desafío es, naturalmente, que hagas tu propio test de personalidad</strong>.</p>
+        <p>Si te interesa el archivo original hecho en Pascal, podés <a href="../pas/programmer-stereotypes.pas" download>descargarlo aquí mismo</a>.</p>
+    </footer>
+
+    <script src="../js/testpersona.js"></script>
+</body>
+</html>

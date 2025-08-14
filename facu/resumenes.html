@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resúmenes - MUCHO CÓDIGO</title>
+    <meta name="description" content="Resúmenes y materiales de estudio por año">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <a href="facu.html" class="back-link">← Volver</a>
+
+    <div class="container">
+        <h1>Resúmenes</h1>
+        
+        <button class="year-button" onclick="toggleYear('primero')">
+            Primero
+        </button>
+        <div id="primero" class="year-content">
+            <div class="subject">
+                <h3>CADP (Conceptos de Algoritmos, Datos y Programas)</h3>
+                <a href="pdfs/1-cadp-resumen-teoricos.pdf" class="pdf-link" download>
+                    📄 Resumen de los teóricos
+                </a>
+            </div>
+            
+            <div class="subject">
+                <h3>Organización de Computadoras</h3>
+                <a href="pdfs/1-organizacion-practicos-resumen1.pdf" class="pdf-link" download>
+                    📄 Prácticos - Resumen 1
+                </a>
+                <a href="pdfs/1-organizacion-teoricos-resumen1.pdf" class="pdf-link" download>
+                    📄 Teóricos - Resumen 1
+                </a>
+                <a href="pdfs/1-organizacion-practicos-resumen2.pdf" class="pdf-link" download>
+                    📄 Prácticos - Resumen 2
+                </a>
+                <a href="pdfs/1-organizacion-teoricos-resumen2.pdf" class="pdf-link" download>
+                    📄 Teóricos - Resumen 2
+                </a>
+            </div>
+        </div>
+
+        <button class="year-button" onclick="toggleYear('segundo')">
+            Segundo
+        </button>
+        <div id="segundo" class="year-content">
+            <div class="empty-year">
+                Próximamente...
+            </div>
+        </div>
+
+        <button class="year-button" onclick="toggleYear('tercero')">
+            Tercero
+        </button>
+        <div id="tercero" class="year-content">
+            <div class="empty-year">
+                Próximamente...
+            </div>
+        </div>
+
+        <button class="year-button" onclick="toggleYear('cuarto')">
+            Cuarto
+        </button>
+        <div id="cuarto" class="year-content">
+            <div class="empty-year">
+                Próximamente...
+            </div>
+        </div>
+
+        <button class="year-button" onclick="toggleYear('quinto')">
+            Quinto
+        </button>
+        <div id="quinto" class="year-content">
+            <div class="empty-year">
+                Próximamente...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleYear(yearId) {
+            const content = document.getElementById(yearId);
+            const button = document.querySelector(`[onclick="toggleYear('${yearId}')"]`);
+            
+            // Cerrar otros años abiertos
+            const allContents = document.querySelectorAll('.year-content');
+            const allButtons = document.querySelectorAll('.year-button');
+            
+            allContents.forEach(c => {
+                if (c.id !== yearId) {
+                    c.classList.remove('active');
+                }
+            });
+            
+            allButtons.forEach(b => {
+                if (b !== button) {
+                    b.classList.remove('active');
+                }
+            });
+            
+            // Toggle el año actual
+            content.classList.toggle('active');
+            button.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

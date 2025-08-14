@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigo invisible generator - MUCHO CÓDIGO</title>
+    <meta name="description" content="Generador de amigo invisible para hasta 100 personas">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <a href="desafios.html" class="back-link">← Volver</a>
+    
+    <div class="container">
+        <h1>Amigo invisible generator</h1>
+        
+        <div class="converter-section">
+            <h2 class="converter-title">INVISIBLE FRIEND GENERATOR</h2>
+            <div class="converter-content">
+                <div class="input-side">
+                    <div class="input-group">
+                        <label for="nameInput">Agregá nombres (hasta 100):</label>
+                        <input type="text" id="nameInput" placeholder="Escribí un nombre y presioná Enter">
+                    </div>
+                    
+                    <div id="namesList" style="margin-bottom: 20px; max-height: 200px; overflow-y: auto;">
+                        <div style="color: var(--text-gray); font-style: italic; text-align: center; padding: 20px;">
+                            Los nombres aparecerán aquí...
+                        </div>
+                    </div>
+                    
+                    <button class="convert-btn" id="generateBtn" disabled>Generar asignaciones</button>
+                    <button class="convert-btn" id="clearBtn" style="margin-top: 10px; border-color: var(--text-gray); color: var(--text-gray);">Limpiar lista</button>
+                </div>
+                
+                <div class="results-side">
+                    <div id="results" class="results-container">
+                        <div style="color: var(--text-gray); font-style: italic; text-align: center; padding: 20px;">
+                            Agregá al menos 2 nombres para generar las asignaciones
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation-section">
+            <h2>¿Cómo funciona?</h2>
+            <p>Este generador implementa el algoritmo clásico del amigo invisible. Cada persona de la lista será asignada aleatoriamente a otra persona, asegurándose de que:</p>
+            <p>• Nadie se asigne a sí mismo</p>
+            <p>• Cada persona tenga exactamente un amigo invisible</p>
+            <p>• Todas las asignaciones sean diferentes</p>
+            <p>El algoritmo usa un método de reintentos para garantizar que siempre se encuentre una solución válida, sin importar el orden de los nombres ingresados.</p>
+            <p><strong>El desafío es crear un programa similar, pero que sirva para dividir a un grupo de personas en dos o más equipos.</strong></p>
+        </div>
+    </div>
+
+    <footer class="contact">
+        <p>Si te interesa el archivo original hecho en Pascal, podés <a href="../pas/invisible-friend.pas" download>descargarlo aquí mismo</a>.</p>
+    </footer>
+
+    <script>
+        let names = [];
+        const nameInput = document.getElementById('nameInput');
+        const namesList = document.getElementById('namesList');
+        const generateBtn = document.getElementById('generateBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const results = document.getElementById('results');
+
+        function updateNamesList() {
+            if (names.length === 0) {
+                namesList.innerHTML = `
+                    <div style="color: var(--text-gray); font-style: italic; text-align: center; padding: 20px;">
+                        Los nombres aparecerán aquí...
+                    </div>
+                `;
+            } else {
+                namesList.innerHTML = names.map((name, index) => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid var(--border-gray);">
+                        <span style="color: var(--text-light);">${name}</span>
+                        <button onclick="removeName(${index})" style="background: none; border: none; color: var(--text-gray); cursor: pointer; font-size: 1.2rem;">&times;</button>
+                    </div>
+                `).join('');
+            }
+            
+            generateBtn.disabled = names.length < 2;
+            if (names.length < 2) {
+                generateBtn.style.opacity = '0.5';
+                generateBtn.style.cursor = 'not-allowed';
+            } else {
+                generateBtn.style.opacity = '1';
+                generateBtn.style.cursor = 'pointer';
+            }
+        }
+
+        function addName() {
+            const name = nameInput.value.trim();
+            if (name && name !== 'ready' && names.length < 100 && !names.includes(name)) {
+                names.push(name);
+                nameInput.value = '';
+                updateNamesList();
+                clearResults();
+            }
+        }
+
+        function removeName(index) {
+            names.splice(index, 1);
+            updateNamesList();
+            clearResults();
+        }
+
+        function clearResults() {
+            results.innerHTML = `
+                <div style="color: var(--text-gray); font-style: italic; text-align: center; padding: 20px;">
+                    ${names.length < 2 ? 'Agregá al menos 2 nombres para generar las asignaciones' : 'Hacé clic en "Generar asignaciones" para ver los resultados'}
+                </div>
+            `;
+        }
+
+        function generateAssignments() {
+            console.log('Generando asignaciones para:', names);
+            
+            if (names.length < 2) {
+                console.log('Menos de 2 nombres, saliendo');
+                return;
+            }
+            
+            if (names.length === 1) {
+                results.innerHTML = `
+                    <div class="result-item">
+                        <div class="result-value" style="text-align: center; font-style: italic;">
+                            Farewell my friend
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Algoritmo simplificado pero efectivo
+            let assignments = [];
+            let maxAttempts = 1000;
+            let attempt = 0;
+            
+            while (attempt < maxAttempts) {
+                attempt++;
+                let available = [...Array(names.length).keys()]; // [0,1,2,3...]
+                let currentAssignments = [];
+                let success = true;
+                
+                for (let i = 0; i < names.length; i++) {
+                    // Filtrar opciones válidas (no puede ser él mismo)
+                    let validOptions = available.filter(option => option !== i);
+                    
+                    if (validOptions.length === 0) {
+                        success = false;
+                        break;
+                    }
+                    
+                    // Elegir aleatoriamente de las opciones válidas
+                    let randomIndex = Math.floor(Math.random() * validOptions.length);
+                    let chosen = validOptions[randomIndex];
+                    
+                    currentAssignments[i] = chosen;
+                    // Remover el elegido de disponibles
+                    available = available.filter(option => option !== chosen);
+                }
+                
+                if (success) {
+                    assignments = currentAssignments;
+                    console.log('Asignaciones generadas en intento', attempt, ':', assignments);
+                    break;
+                }
+            }
+            
+            if (assignments.length === 0) {
+                results.innerHTML = `
+                    <div class="result-item error-result">
+                        <div class="result-value">Error: No se pudo generar una asignación válida</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Mostrar resultados
+            let resultsHTML = '';
+            for (let i = 0; i < names.length; i++) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <div class="result-label">${names[i]} tu amigo invisible es:</div>
+                        <div class="result-value">${names[assignments[i]]}</div>
+                    </div>
+                `;
+            }
+            
+            console.log('Mostrando HTML:', resultsHTML);
+            results.innerHTML = resultsHTML;
+            results.classList.add('show');
+        }
+
+        // Event listeners
+        nameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addName();
+            }
+        });
+
+        generateBtn.addEventListener('click', generateAssignments);
+
+        clearBtn.addEventListener('click', function() {
+            names = [];
+            nameInput.value = '';
+            updateNamesList();
+            clearResults();
+        });
+
+        // Inicializar
+        updateNamesList();
+    </script>
+</body>
+</html>

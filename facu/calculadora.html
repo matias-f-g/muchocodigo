@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Binaria - MUCHO CÓDIGO</title>
+    <meta name="description" content="Calculadora binaria que suma y resta números binarios con análisis en diferentes sistemas de representación">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Estilos específicos para la calculadora */
+        .calculator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .calculator-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .controls-side {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .operation-selector {
+            width: 100%;
+        }
+        
+        .operation-selector label {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+        
+        .operation-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .operation-btn {
+            flex: 1;
+            padding: 12px 20px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: transparent;
+            border: 2px solid var(--border-medium);
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .operation-btn.active {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            background-color: var(--dark-green);
+        }
+        
+        .operation-btn:hover:not(.active) {
+            border-color: var(--secondary-green);
+            color: var(--text-light);
+        }
+        
+        .calculate-button {
+            width: 100%;
+            padding: 15px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            background: transparent;
+            border: 2px solid var(--primary-green);
+            color: var(--primary-green);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .calculate-button:hover {
+            background-color: var(--primary-green);
+            color: var(--bg-dark);
+            box-shadow: var(--glow-large);
+        }
+        
+        /* Estilo de cuenta vertical */
+        .binary-calculation {
+            font-family: 'Courier New', monospace;
+            font-size: 1.4rem;
+            background-color: var(--bg-darker);
+            border: 2px solid var(--primary-green);
+            padding: 30px;
+            text-align: right;
+            line-height: 1.8;
+            width: 280px;
+            color: var(--primary-green);
+        }
+        
+        .binary-calculation .first-number {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .binary-calculation .operation-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .binary-calculation .operation-symbol {
+            color: var(--primary-green);
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-left: 10px;
+        }
+        
+        .binary-calculation .result-line {
+            display: block;
+            border-top: 2px solid var(--primary-green);
+            padding-top: 10px;
+            margin-top: 10px;
+            text-shadow: var(--glow-tiny);
+        }
+        
+        .binary-calculation input {
+            background: transparent;
+            border: none;
+            color: var(--primary-green);
+            font-family: inherit;
+            font-size: inherit;
+            text-align: right;
+            outline: none;
+            border-bottom: 1px dashed var(--border-medium);
+            padding: 2px 5px;
+            width: auto;
+            min-width: 80px;
+        }
+        
+        .binary-calculation input:focus {
+            border-bottom-color: var(--primary-green);
+            background-color: var(--light-green);
+        }
+        
+        .binary-calculation input::placeholder {
+            color: var(--text-gray);
+            opacity: 0.7;
+        }
+        
+        .result-display {
+            font-weight: bold;
+            color: var(--primary-green);
+        }
+        
+        /* Flags y análisis */
+        .results-info {
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        .flag-info {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+        
+        .flag-item {
+            padding: 10px 15px;
+            background-color: var(--bg-darker);
+            border: 1px solid var(--border-medium);
+            border-radius: 3px;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .flag-label {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .flag-value {
+            font-weight: bold;
+            color: var(--primary-green);
+            font-size: 1.1rem;
+        }
+        
+        .analysis-section {
+            border: 2px solid var(--border-gray);
+            background-color: var(--bg-darker);
+            padding: 20px;
+        }
+        
+        .analysis-title {
+            color: var(--secondary-green);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .analysis-item {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            background-color: var(--bg-dark);
+            border-left: 3px solid var(--border-medium);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .analysis-item.correct {
+            border-left-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+        
+        .analysis-item.incorrect {
+            border-left-color: #ff4444;
+            color: #ff4444;
+        }
+        
+        /* Estado inicial oculto */
+        .results-info {
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+        
+        .results-info.show {
+            opacity: 1;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .calculator-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 20px 15px;
+            }
+            
+            .binary-calculation {
+                font-size: 1.2rem;
+                padding: 20px;
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .flag-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .flag-item {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="facu.html" class="back-link">← Volver</a>
+    
+    <div class="container">
+        <h1>Calculadora binaria</h1>
+        
+        <div class="calculator-container">
+            <div class="calculator-side">
+                <div class="binary-calculation">
+                    <span class="first-number">
+                        <input type="text" id="firstNumber" placeholder="00000" maxlength="10">
+                    </span>
+                    <span class="operation-line">
+                        <input type="text" id="secondNumber" placeholder="00000" maxlength="10">
+                    </span>
+                    <span class="result-line">
+                        <span class="result-display" id="binaryResult">00000</span>
+                    </span>
+                </div>
+                
+                <div class="results-info" id="resultsInfo">
+                    <div class="flag-info">
+                        <div class="flag-item">
+                            <span class="flag-label">Carry Flag</span>
+                            <span class="flag-value" id="carryFlag">0</span>
+                        </div>
+                        <div class="flag-item">
+                            <span class="flag-label">Zero Flag</span>
+                            <span class="flag-value" id="zeroFlag">1</span>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <div class="analysis-title">Análisis por sistema de representación</div>
+                        <div class="analysis-item" id="ubnAnalysis">BSS: -</div>
+                        <div class="analysis-item" id="sbnAnalysis">BCS: -</div>
+                        <div class="analysis-item" id="oneAnalysis">Ca1: -</div>
+                        <div class="analysis-item" id="twoAnalysis">Ca2: -</div>
+                        <div class="analysis-item" id="offsetAnalysis">Ex2: -</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls-side">
+                <div class="operation-selector">
+                    <label>Seleccioná la operación:</label>
+                    <div class="operation-buttons">
+                        <button class="operation-btn active" data-op="add">Sumar (+)</button>
+                        <button class="operation-btn" data-op="subtract">Restar (-)</button>
+                    </div>
+                </div>
+                
+                <button class="calculate-button" onclick="calculateBinary()">Calcular</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="contact">
+        <p>Si te interesa el archivo original hecho en Pascal, podés <a href="../pas/binary-calculator.pas" download>descargarlo aquí mismo</a>.</p>
+    </footer>
+
+    <script src="../js/common-utils.js"></script>
+    <script src="../js/calculadora.js"></script>
+</body>
+</html>

@@ -1,0 +1,685 @@
+/* VARIABLES CSS */
+:root {
+    --primary-green: #00ff00;
+    --secondary-green: #00aa00;
+    --dark-green: #003300;
+    --light-green: #001100;
+    --bg-dark: #1a1a1a;
+    --bg-darker: #0f0f0f;
+    --text-light: #ccc;
+    --text-gray: #888;
+    --text-white: #ffffff;
+    --border-gray: #333;
+    --border-medium: #666;
+    
+    --glow-large: 0 0 20px var(--primary-green);
+    --glow-medium: 0 0 10px var(--primary-green);
+    --glow-small: 0 0 5px var(--primary-green);
+    --glow-tiny: 0 0 3px var(--primary-green);
+}
+
+/* ESTILOS BASE COMUNES */
+body {
+    font-family: 'Courier New', monospace;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark);
+    color: var(--primary-green);
+}
+
+/* BACK LINK (usado en todas las subpáginas) */
+.back-link {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    text-decoration: none;
+    border: 1px solid var(--text-gray);
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+}
+
+.back-link:hover {
+    color: var(--primary-green);
+    border-color: var(--primary-green);
+    box-shadow: var(--glow-medium);
+}
+
+/* TÍTULOS COMUNES */
+h1 {
+    font-size: 2.5rem;
+    text-shadow: var(--glow-medium);
+    text-align: center;
+}
+
+h2 {
+    font-size: 2.1rem;
+    margin: 3rem 0 2rem 0;
+    color: var(--primary-green);
+    text-shadow: var(--glow-small);
+}
+
+h3 {
+    font-size: 1.5rem;
+    color: var(--primary-green);
+    margin: 3rem 0 1rem 0;
+    text-shadow: var(--glow-tiny);
+}
+
+/* BOTONES COMUNES */
+.btn {
+    font-family: inherit;
+    background: transparent;
+    border: 2px solid var(--primary-green);
+    color: var(--primary-green);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: var(--primary-green);
+    color: var(--bg-dark);
+    box-shadow: var(--glow-large);
+}
+
+/* CONTENEDORES COMUNES */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 80px 20px 40px 20px;
+}
+
+/* ESTILOS PARA PÁGINAS DE NAVEGACIÓN Y PRINCIPAL */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Para páginas de navegación que no tienen subtitle */
+.hero h1.nav-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    color: var(--text-gray);
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 0 auto;
+    max-width: 300px;
+}
+
+.buttons.nav-buttons {
+    max-width: 400px;
+}
+
+.hero .btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+}
+
+.hero .btn.nav-btn {
+    padding: 20px 30px;
+    font-size: 1.1rem;
+    line-height: 1.3;
+}
+
+.hero .btn.nav-btn:hover {
+    transform: translateY(-2px);
+}
+
+.content-section {
+    padding: 4rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+    line-height: 1.6;
+}
+
+.content-section p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-light);
+}
+
+.content-section a {
+    color: var(--text-white);
+    text-decoration: none;
+}
+
+.content-section a:hover {
+    text-shadow: var(--glow-small);
+}
+
+.contact {
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    padding: 2rem;
+    border-top: 1px solid var(--border-gray);
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.contact a {
+    color: var(--text-gray);
+    text-decoration: none;
+}
+
+.contact a:hover {
+    color: var(--primary-green);
+    text-shadow: var(--glow-small);
+}
+
+/* ESTILOS PARA PÁGINA DE RECOMENDACIONES */
+.text-content {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+    line-height: 1.6;
+}
+
+.text-content a {
+    color: var(--text-white);
+    text-decoration: none;
+}
+
+.text-content a:hover {
+    text-shadow: var(--glow-small);
+}
+
+.book-title {
+    font-style: italic;
+}
+
+.section {
+    margin-bottom: 4rem;
+}
+
+/* ESTILOS ESPECÍFICOS PARA RESÚMENES */
+.year-button {
+    width: 100%;
+    padding: 20px;
+    font-size: 1.3rem;
+    font-family: inherit;
+    background: transparent;
+    border: 2px solid var(--primary-green);
+    color: var(--primary-green);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+    text-align: left;
+    position: relative;
+}
+
+.year-button:hover {
+    background-color: var(--primary-green);
+    color: var(--bg-dark);
+    box-shadow: var(--glow-large);
+}
+
+.year-button.active {
+    background-color: var(--dark-green);
+    border-color: var(--secondary-green);
+}
+
+.year-button::after {
+    content: '+';
+    position: absolute;
+    right: 20px;
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.year-button.active::after {
+    transform: rotate(45deg);
+}
+
+.year-content {
+    display: none;
+    padding: 20px;
+    border-left: 3px solid var(--primary-green);
+    margin-bottom: 20px;
+    background-color: var(--bg-darker);
+}
+
+.year-content.active {
+    display: block;
+}
+
+.subject {
+    margin-bottom: 2rem;
+}
+
+.subject h3 {
+    color: var(--secondary-green);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-gray);
+    text-shadow: none;
+    margin-top: 0;
+}
+
+.pdf-link {
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    background: transparent;
+    border: 1px solid var(--border-medium);
+    color: var(--text-light);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.pdf-link:hover {
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+    background-color: var(--light-green);
+    transform: translateX(5px);
+}
+
+.empty-year {
+    color: var(--border-medium);
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+}
+
+/* ESTILOS ESPECÍFICOS PARA HISTORIA */
+.quote {
+    background-color: var(--bg-darker);
+    border-left: 4px solid var(--primary-green);
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.quote-text {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.quote-author {
+    color: var(--secondary-green);
+    font-style: normal;
+    font-weight: bold;
+    text-align: right;
+}
+
+.meme-container {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 20px;
+    background-color: var(--bg-darker);
+    border: 2px dashed var(--border-gray);
+}
+
+.meme-img {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid var(--primary-green);
+}
+
+.meme-placeholder {
+    color: var(--border-medium);
+    font-style: italic;
+    padding: 40px;
+}
+
+/* =============================================== */
+/* ESTILOS PARA CALCULADORAS/CONVERTIDORES        */
+/* =============================================== */
+
+/* Estructura principal del conversor */
+.converter-section {
+    margin: 6rem 0;
+    border: 2px solid var(--primary-green);
+    background-color: var(--bg-darker);
+}
+
+.converter-title {
+    background-color: var(--primary-green);
+    color: var(--bg-dark);
+    padding: 15px;
+    margin: 0;
+    font-size: 1.5rem;
+    text-align: center;
+    text-shadow: none;
+}
+
+.converter-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 400px;
+}
+
+.input-side {
+    border-right: 2px solid var(--primary-green);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.results-side {
+    padding: 30px;
+    background-color: var(--bg-dark);
+}
+
+/* Grupos de entrada y inputs */
+.input-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: var(--text-light);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    background: transparent;
+    border: 2px solid var(--border-medium);
+    color: var(--primary-green);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: var(--glow-small);
+}
+
+/* Botones de conversión */
+.convert-btn {
+    width: 100%;
+    padding: 15px;
+    font-family: inherit;
+    font-size: 1.1rem;
+    background: transparent;
+    border: 2px solid var(--primary-green);
+    color: var(--primary-green);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+.convert-btn:hover {
+    background-color: var(--primary-green);
+    color: var(--bg-dark);
+    box-shadow: var(--glow-large);
+}
+
+/* Sistema de resultados */
+.results-container {
+    display: none;
+}
+
+.results-container.show {
+    display: block;
+}
+
+.result-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-left: 3px solid var(--secondary-green);
+    background-color: var(--bg-darker);
+}
+
+.result-label {
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    margin-bottom: 8px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: none;
+}
+
+.result-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    color: var(--primary-green);
+    text-shadow: var(--glow-tiny);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: none;
+}
+
+.error-result {
+    border-left-color: var(--primary-green);
+}
+
+.error-result .result-value {
+    color: var(--primary-green);
+}
+
+/* Secciones de explicación para calculadoras */
+.explanation-section {
+    margin-top: 8rem;
+    padding: 40px;
+    border: 2px solid var(--border-gray);
+    background-color: var(--bg-darker);
+    text-align: justify;
+}
+
+.explanation-section h2 {
+    margin-top: 0;
+    color: var(--primary-green);
+}
+
+.explanation-section p {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.explanation-section a {
+    color: var(--text-white);
+    text-decoration: none;
+}
+
+.explanation-section a:hover {
+    text-shadow: var(--glow-small);
+}
+
+/* CANVAS CONTAINERS */
+.canvas-container {
+    text-align: center;
+    margin: 3rem 0;
+    padding: 30px;
+}
+
+.canvas-container h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--primary-green);
+    text-shadow: var(--glow-small);
+}
+
+/* Tratamiento especial para el segundo canvas */
+.second-canvas-container {
+    max-width: 840px !important;
+    margin: 3rem auto;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.second-canvas-container #newtonCanvas2 {
+    width: 800px;
+    height: 600px;
+    margin: 0 auto;
+    display: block;
+}
+
+#gaussCanvas {
+    border: 2px solid var(--border-medium);
+    background-color: #000;
+}
+
+/* =============================================== */
+/* SYNTAX HIGHLIGHTING PARA CÓDIGO                */
+/* =============================================== */
+
+.code-section {
+    margin: 4rem 0;
+    border: 2px solid var(--primary-green);
+    background-color: var(--bg-darker);
+}
+
+.code-title {
+    background-color: var(--primary-green);
+    color: var(--bg-dark);
+    padding: 15px;
+    margin: 0;
+    font-size: 1.3rem;
+    text-align: center;
+    text-shadow: none;
+}
+
+.code-content {
+    padding: 30px;
+}
+
+.code-block {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-medium);
+    padding: 25px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    overflow-x: auto;
+    line-height: 1.4;
+    white-space: pre;
+}
+
+/* Syntax highlighting para JavaScript/p5.js */
+.keyword { color: #ff79c6; font-weight: bold; }
+.function { color: #50fa7b; }
+.number { color: #bd93f9; }
+.string { color: #f1fa8c; }
+.comment { color: #6272a4; font-style: italic; }
+.class-name { color: #8be9fd; font-weight: bold; }
+.property { color: #50fa7b; }
+.this { color: #ff79c6; font-style: italic; }
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    .back-link {
+        position: static;
+        display: block;
+        text-align: center;
+        margin: 20px auto;
+        width: fit-content;
+    }
+    
+    .container {
+        padding-top: 40px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.7rem; }
+    h3 { font-size: 1.3rem; }
+    
+    .hero h1 { font-size: 2rem; }
+    .subtitle { font-size: 1.2rem; }
+    .btn { font-size: 1rem; }
+    
+    .hero .btn { 
+        padding: 12px 25px; 
+        font-size: 1rem;
+    }
+    
+    .hero .btn.nav-btn { 
+        font-size: 1rem; 
+        padding: 15px 25px; 
+    }
+    
+    .content-section { 
+        padding: 3rem 1.5rem; 
+    }
+
+    .text-content {
+        text-align: left;
+    }
+    
+    .year-button { 
+        font-size: 1.1rem; 
+        padding: 15px; 
+    }
+
+    /* Responsive para calculadoras */
+    .converter-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .input-side {
+        border-right: none;
+        border-bottom: 2px solid var(--primary-green);
+    }
+
+    /* Responsive para canvas */
+    .code-content {
+        padding: 20px;
+    }
+    
+    .code-block {
+        padding: 15px;
+        font-size: 0.8rem;
+    }
+
+    .second-canvas-container {
+        max-width: 100% !important;
+        padding: 20px 15px;
+    }
+
+    .second-canvas-container #newtonCanvas2 {
+        width: 100%;
+        max-width: 800px;
+        height: auto;
+    }
+}
+
+#final-source a {
+    color: var(--primary-green);
+    text-decoration: none;
+    text-shadow: var(--glow-tiny);
+}
+
+#final-source a:hover {
+    text-shadow: var(--glow-small);
+}

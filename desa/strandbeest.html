@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A NEW CREATURE - MUCHO CÓDIGO</title>
+  <meta name="description" content="Simulación de la pata Strandbeest y un pequeño 'bicho' ensamblado - p5.js" />
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+</head>
+<body>
+  <a href="desafios.html" class="back-link">← Volver</a>
+
+  <div class="container">
+    <h1>A NEW CREATURE</h1>
+
+    <div class="canvas-container">
+      <h2>La pata en acción</h2>
+      <div id="legCanvas" class="canvas-placeholder"></div>
+    </div>
+
+    <p class="text-content">
+        Este programa intenta simular la pata de la Strandbeest, una criatura cinética creada por Theo Jansen. Podés <a href="../js/strandbeest-leg.js" download>descargarlo acá</a>.
+        Está basado en las medidas que él mismo publicó:
+    </p>
+
+      <div class="meme-container">
+        <img src="../img/leg-ratios.png" alt="Leg ratios - Strandbeest" class="meme-img">
+      </div>
+
+    <div class="canvas-container">
+      <h2>Un bicho ensamblado</h2>
+      <p class="text-content">Después de hacer la pata suelta, traté de ensamblar dos de esas en este bicho. Acá podés <a href="../js/strandbeest-creature.js" download>descargar el programa</a>. Para mover a la simpática bestia, presioná la 'a' y la 'd'.</p>
+      <div id="creatureCanvas" class="canvas-placeholder" tabindex="0"></div>
+    </div>
+
+    <div class="explanation-section">
+      <h2>¿Por qué hice este programa?</h2>
+      <p>Un día vi la historia de estas bestias mecánicas en
+        <a href="https://youtu.be/IFaAjR_RRJs?si=5m1-2c3WLrj4OUBx" target="_blank" rel="noopener noreferrer">34 Years Of Strandbeest Evolution</a>,
+        y me parecieron altas criaturas para llevarlas a p5.js.
+      </p>
+      <p>Seguramente lo hice de la forma más ineficiente y rebuscada posible, pero fue interesante hacerlo poco a poco utilizando solamente nociones bastante elementales de geometría analítica.</p>
+      <p><strong>El desafío es tratar de simular una de estas bestias de forma más realista, o con un diseño más lindo, o lo que pinte</strong>.</p>
+    </div>
+  </div>
+
+  <!-- --------------------------
+       SKETCH 1: strandbeest-leg
+       (INCRUSTADO - modo instancia)
+       Basado en tu archivo original strandbeest-leg
+       -------------------------- -->
+  <script>
+  const strandbeestLegSketch = (p) => {
+    // --- copia fiel del código original, adaptado a p.* para instancia ---
+    let leg;
+    let amp = 3;
+
+    p.setup = function() {
+      // crea canvas y lo parenta al contenedor
+      let canvas = p.createCanvas(750, 600);
+      canvas.parent('legCanvas');
+      p.angleMode(p.DEGREES);
+      leg = new Leg(p.width / 2, p.height / 2, 0);
+    };
+
+    p.draw = function() {
+      p.background(230);
+      leg.show();
+    };
+
+    class Leg {
+      constructor(x, y, dir) {
+        this.position = p.createVector(x, y);
+        this.angle = dir;
+        this.m = new Rotor(0, -(7 * amp), 15 * amp);
+        this.b = new Bone(-(38 * amp), 0, 41.5 * amp);
+        this.d = new Bone(-(38 * amp), 0, 40.1 * amp);
+        this.c = new Bone(-(38 * amp), 0, 39.3 * amp);
+        this.j = new Part(0, 0, 50 * amp, 220);
+        this.e = new Part(this.j.endPos.x, this.j.endPos.y, 55.8 * amp, 180);
+        this.k = new Part(0, 0, 61.9 * amp, 130);
+        this.f = new Part(this.e.endPos.x, this.e.endPos.y, 39.4 * amp, 90);
+        this.h = new Part(this.f.endPos.x, this.f.endPos.y, 65.7 * amp, 90);
+        this.i = new Bone(this.k.endPos.x, this.k.endPos.y, 49 * amp);
+        this.g = new Bone(this.k.endPos.x, this.k.endPos.y, 36.7 * amp);
+      }
+      update(x, y, dir) {
+        this.position = p.createVector(x, y);
+        this.angle = dir;
+      }
+      show () {
+        p.push();
+        p.translate(this.position.x, this.position.y);
+        p.rotate(this.angle);
+        this.m.update();
+        this.m.show();
+        this.j.update(this.m.endPos.x, this.m.endPos.y, this.b.origin.x, this.b.origin.y, this.b.len, 1);
+        this.j.show();
+        this.b.update(this.b.origin.x, this.b.origin.y, this.j.endPos.x, this.j.endPos.y);
+        this.b.show();
+        this.e.update(this.j.endPos.x, this.j.endPos.y, this.b.origin.x, this.b.origin.y, this.d.len, 1);
+        this.e.show();
+        this.d.update(this.d.origin.x, this.d.origin.y, this.e.endPos.x, this.e.endPos.y);
+        this.d.show();
+        this.k.update(this.m.endPos.x, this.m.endPos.y, this.b.origin.x, this.b.origin.y, this.c.len, -1);
+        this.k.show();
+        this.c.update(this.c.origin.x, this.c.origin.y, this.k.endPos.x, this.k.endPos.y);
+        this.c.show();
+        this.f.update(this.e.endPos.x, this.e.endPos.y, this.k.endPos.x, this.k.endPos.y, this.g.len, 1);
+        this.f.show();
+        this.g.update(this.f.endPos.x, this.f.endPos.y, this.k.endPos.x, this.k.endPos.y);
+        this.g.show();
+        this.h.update(this.f.endPos.x, this.f.endPos.y, this.k.endPos.x, this.k.endPos.y, this.i.len, 1);
+        this.h.show();
+        this.g.update(this.k.endPos.x, this.k.endPos.y, this.h.endPos.x, this.h.endPos.y);
+        this.g.show();
+        p.pop();
+      }
+    }
+
+    class Bone {
+      constructor(x, y, len) {
+        this.origin = p.createVector(x, y);
+        this.endPos = p.createVector(0, 0);
+        this.len = len;
+      }
+      update(ox, oy, ex, ey) {
+        this.origin = p.createVector(ox, oy);
+        this.endPos = p.createVector(ex, ey);
+      }
+      show() {
+        p.circle(this.origin.x, this.origin.y, 5);
+        p.circle(this.endPos.x, this.endPos.y, 5);
+        p.line(this.origin.x, this.origin.y, this.endPos.x, this.endPos.y);
+      }
+    }
+
+    class Part {
+      constructor(x, y, len, ang) {
+        // mantengo el orden original (aunque angle/len se asignen después),
+        // así el comportamiento es idéntico al original.
+        this.origin = p.createVector(x, y);
+        this.endPos = this.origin.copy();
+        this.endPos.setHeading(this.angle);
+        this.endPos.setMag(this.len);
+        this.len = len;
+        this.angleVelocity = 0;
+        this.angle = ang;
+      }
+      update(fx, fy, dx, dy, fixDist, upDown) {
+        this.origin = p.createVector(fx, fy);
+        this.endPos = this.origin.copy();
+        this.endPos.setHeading(this.angle);
+        this.endPos.setMag(this.len);
+        let tempPos = p5.Vector.add(this.endPos, this.origin);
+        let i = 0;
+        if (p.dist(dx, dy, tempPos.x, tempPos.y) > fixDist ) {
+          while (p.dist(dx, dy, tempPos.x, tempPos.y) > fixDist && i < 9000) { 
+            this.angle -= (0.001 * upDown);
+            this.origin = p.createVector(fx, fy);
+            this.endPos = this.origin.copy();
+            this.endPos.setHeading(this.angle);
+            this.endPos.setMag(this.len);
+            tempPos = p5.Vector.add(this.endPos, this.origin);
+            i++;
+          }
+        } else {
+          while (p.dist(dx, dy, tempPos.x, tempPos.y) < fixDist && i < 9000) { 
+            this.angle += (0.001 * upDown);
+            this.origin = p.createVector(fx, fy);
+            this.endPos = this.origin.copy();
+            this.endPos.setHeading(this.angle);
+            this.endPos.setMag(this.len);
+            tempPos = p5.Vector.add(this.endPos, this.origin);
+            i++
+          }
+        }
+      }
+      show() {
+        p.circle(this.origin.x, this.origin.y, 5);
+        // el original hacía this.endPos.add(this.origin) (mutación)
+        this.endPos.add(this.origin);
+        p.circle(this.endPos.x, this.endPos.y, 5);
+        p.line(this.origin.x, this.origin.y, this.endPos.x, this.endPos.y);
+      }
+    }
+
+    class Rotor {
+      constructor(x, y, len) {
+        this.origin = p.createVector(x, y);
+        this.endPos = this.origin.copy();
+        this.endPos.setHeading(this.angle);
+        this.endPos.setMag(this.len);
+        this.len = len;
+        this.angleVelocity = -1;
+        this.angle = 0;
+      }
+      update() {
+        this.angle += this.angleVelocity;
+        this.endPos = this.origin.copy();
+        this.endPos.setHeading(this.angle);
+        this.endPos.setMag(this.len);
+      }
+      show() {
+        p.circle(this.origin.x, this.origin.y, 10);
+        this.endPos.add(this.origin);
+        p.circle(this.endPos.x, this.endPos.y, 5);
+        p.line(this.origin.x, this.origin.y, this.endPos.x, this.endPos.y);
+      }
+    }
+  };
+  </script>
+
+  <!-- --------------------------
+       SKETCH 2: a-new-creature
+       (INCRUSTADO - modo instancia)
+       Basado en tu archivo original a-new-creature
+       -------------------------- -->
+  <script>
+const aNewCreatureSketch = (p) => {
+  let bug;
+
+  p.setup = function() {
+    let canvas = p.createCanvas(750, 600);
+    canvas.parent('creatureCanvas');
+    p.angleMode(p.DEGREES);
+    bug = new Bug(p.width / 2, p.height / 2);
+    p._bug = bug; // para el control global de teclas
+  };
+
+  p.draw = function() {
+    p.background(255);
+    bug.update();
+    bug.show();
+  };
+
+  p.keyPressed = function() {
+    if (p.key === 'd') {
+      bug.acceleration.x += 0.5;
+    } else if (p.key === 'a') {
+      bug.acceleration.x -= 0.5;
+    }
+  };
+
+  class Bug {
+    constructor(x, y) {
+      this.position = p.createVector(x, y);
+      this.velocity = p.createVector(0, 0);
+      this.acceleration = p.createVector(0, 0);
+      this.mass = 30;
+      this.leg1 = new Leg(60, 0, 0, 0, 1);
+      this.leg2 = new Leg(-60, 0, 0, 5, 1);
+    }
+    applyForce(force) {
+      let f = p5.Vector.div(force, this.mass);
+      this.acceleration.add(f);
+    }
+    update() {
+      let gravity = p.createVector(0, 0.1);
+      let bugG = p5.Vector.mult(gravity, this.mass);
+      this.applyForce(bugG);
+
+      this.velocity.add(this.acceleration);
+      this.velocity.limit(2);
+      this.position.add(this.velocity);
+      this.acceleration.mult(0);
+      this.velocity.mult(0.99);
+
+      this.checkEdges();
+    }
+    show() {
+      p.push();
+        p.translate(this.position.x, this.position.y);
+        p.fill(200, 170, 10);
+        p.arc(-30, 0, 360, 260, 180, 0, p.CHORD);
+        p.fill(200, 180, 150);
+        p.ellipse(this.leg2.position.x - 90, this.leg2.position.y - 90, 20, 15);
+        p.fill(0);
+        p.ellipse(this.leg2.position.x - 95, this.leg2.position.y - 90, 10, 12);
+        let legAcceleration = p.constrain(this.velocity.x, -1, 1);
+        this.leg1.upShow(legAcceleration);
+        this.leg2.upShow(legAcceleration);
+      p.pop();
+    }
+    checkEdges() {
+      let bounce = -0.6;
+      let alto = 90;
+      if (this.position.y > p.height - alto) {
+        this.position.y = p.height - alto;
+        this.velocity.y *= bounce;
+      }
+      if (this.position.x > p.width - this.radius) {
+        this.position.x = p.width - this.radius;
+        this.velocity.x *= bounce;
+      } else if (this.position.x < 0 + this.radius) {
+        this.position.x = 0 + this.radius;
+        this.velocity.x *= bounce;
+      }
+    }
+  }
+
+  class Leg {
+    constructor(x, y, dir, sAn, big) {
+      this.big = big;
+      this.position = p.createVector(x, y);
+      this.angle = dir;
+      this.angleRef = [220, 160, 130, 62, 90, 246, 151, 158, 128, 64];
+      this.m = new Rotor(0, -(7 * this.big), 15 * this.big, sAn * 24);
+      this.b = new Bone(-(38 * this.big), 0, 41.5 * this.big);
+      this.d = new Bone(-(38 * this.big), 0, 40.1 * this.big);
+      this.c = new Bone(-(38 * this.big), 0, 39.3 * this.big);
+      this.j = new Part(this.m.endPos.x, this.m.endPos.y, 50 * this.big, this.angleRef[0 + sAn]);
+      this.e = new Part(this.j.endPos.x, this.j.endPos.y, 55.8 * this.big, this.angleRef[1 + sAn]);
+      this.k = new Part(this.m.endPos.x, this.m.endPos.y, 61.9 * this.big, this.angleRef[2 + sAn]);
+      this.f = new Part(this.e.endPos.x, this.e.endPos.y, 39.4 * this.big, this.angleRef[3 + sAn]);
+      this.h = new Part(this.f.endPos.x, this.f.endPos.y, 65.7 * this.big, this.angleRef[4 + sAn]);
+      this.i = new Bone(this.k.endPos.x, this.k.endPos.y, 49 * this.big);
+      this.g = new Bone(this.k.endPos.x, this.k.endPos.y, 36.7 * this.big);
+    }
+    upShow(nAngle) {
+      p.push();
+        p.translate(this.position.x, this.position.y);
+        p.rotate(this.angle);
+        this.m.update(nAngle);
+        this.m.show();
+        this.j.update(this.m.endPos.x, this.m.endPos.y, this.b.origin.x, this.b.origin.y, this.b.len, 1);
+        this.j.show();
+        this.b.update(this.b.origin.x, this.b.origin.y, this.j.endPos.x, this.j.endPos.y);
+        this.b.show();
+        this.e.update(this.j.endPos.x, this.j.endPos.y, this.b.origin.x, this.b.origin.y, this.d.len, 1);
+        this.e.show();    
+        this.d.update(this.d.origin.x, this.d.origin.y, this.e.endPos.x, this.e.endPos.y);
+        this.d.show();
+        this.k.update(this.m.endPos.x, this.m.endPos.y, this.b.origin.x, this.b.origin.y, this.c.len, -1);
+        this.k.show();
+        this.c.update(this.c.origin.x, this.c.origin.y, this.k.endPos.x, this.k.endPos.y);
+        this.c.show();
+        this.f.update(this.e.endPos.x, this.e.endPos.y, this.k.endPos.x, this.k.endPos.y, this.g.len, 1);
+        this.f.show();
+        this.g.update(this.f.endPos.x, this.f.endPos.y, this.k.endPos.x, this.k.endPos.y);
+        this.g.show();
+        this.h.update(this.f.endPos.x, this.f.endPos.y, this.k.endPos.x, this.k.endPos.y, this.i.len, 1);
+        this.h.show();
+        this.g.update(this.k.endPos.x, this.k.endPos.y, this.h.endPos.x, this.h.endPos.y);
+        this.g.show();
+        p.line(this.m.origin.x, this.m.origin.y, this.b.origin.x, this.b.origin.y);
+      p.pop();
+    }
+  }
+
+  class Bone {
+    constructor(x, y, len) {
+      this.origin = p.createVector(x, y);
+      this.endPos = p.createVector(0, 0);
+      this.len = len;
+    }
+    update(ox, oy, ex, ey) {
+      this.origin = p.createVector(ox, oy);
+      this.endPos = p.createVector(ex, ey);
+    }
+    show() {
+      p.circle(this.origin.x, this.origin.y, 5);
+      p.circle(this.endPos.x, this.endPos.y, 5);
+      p.line(this.origin.x, this.origin.y, this.endPos.x, this.endPos.y);
+    }
+  }
+
+  class Part {
+    constructor(x, y, len, ang) {
+      this.origin = p.createVector(x, y);
+      this.endPos = this.origin.copy();
+      this.endPos.setHeading(this.angle);
+      this.endPos.setMag(this.len);
+      this.len = len;
+      this.angleVelocity = 0;
+      this.angle = ang;
+    }
+    update(fx, fy, dx, dy, fixDist, upDown) {
+      this.origin = p.createVector(fx, fy);
+      this.endPos = this.origin.copy();
+      this.endPos.setHeading(this.angle);
+      this.endPos.setMag(this.len);
+      let tempPos = p5.Vector.add(this.endPos, this.origin);
+      let i = 0;
+      if (p.dist(dx, dy, tempPos.x, tempPos.y) > fixDist ) {
+        while (p.dist(dx, dy, tempPos.x, tempPos.y) > fixDist && i < 9000) { 
+          this.angle -= (0.001 * upDown);
+          this.origin = p.createVector(fx, fy);
+          this.endPos = this.origin.copy();
+          this.endPos.setHeading(this.angle);
+          this.endPos.setMag(this.len);
+          tempPos = p5.Vector.add(this.endPos, this.origin);
+          i++;
+        }
+      } else {
+        while (p.dist(dx, dy, tempPos.x, tempPos.y) < fixDist && i < 9000) { 
+          this.angle += (0.001 * upDown);
+          this.origin = p.createVector(fx, fy);
+          this.endPos = this.origin.copy();
+          this.endPos.setHeading(this.angle);
+          this.endPos.setMag(this.len);
+          tempPos = p5.Vector.add(this.endPos, this.origin);
+          i++
+        }
+      }
+    }
+    show() {
+      p.circle(this.origin.x, this.origin.y, 5);
+      this.endPos.add(this.origin);
+      p.circle(this.endPos.x, this.endPos.y, 5);
+      p.line(this.origin.x, this.origin.y, this.endPos.x, this.endPos.y);
+    }
+  }
+
+  class Rotor {
+    constructor(x, y, len, iniAng) {
+      this.origin = p.createVector(x, y);
+      this.endPos = this.origin.copy();
+      this.endPos.setHeading(this.angle);
+      this.endPos.setMag(this.len);
+      this.len = len;
+      this.angle = iniAng;
+      this.angleAcceleration = 0;
+      this.angleVelocity = 0;
+    }
+    update(newAngle) {
+      this.angleAcceleration = newAngle;
+      this.angleVelocity += this.angleAcceleration;
+      if (this.angleVelocity > 2 ) {
+        this.angleVelocity = 2; 
+      } else if (this.angleVelocity < -2 ) {
+        this.angleVelocity = -2;
+      }
+      this.angle += this.angleVelocity;
+      this.angleAcceleration = 0;
+      this.angleVelocity *= 0.9;
+      
+      this.endPos = this.origin.copy();
+      this.endPos.setHeading(this.angle);
+      this.endPos.setMag(this.len);
+    }
+    show() {
+      p.circle(this.origin.x, this.origin.y, 14);
+      this.endPos.add(this.origin);
+      p.circle(this.endPos.x, this.endPos.y, 5);
+      p.line(this.origin.x, this.origin.y, this.endPos.x, this.endPos.y);
+    }
+  }
+};
+</script>
+
+
+  <!-- Instanciamos los dos sketches (cada uno dentro de su div) -->
+  <script>
+    // guardamos las instancias para posible debugging / control global
+    const instLeg = new p5(strandbeestLegSketch, 'legCanvas');
+    const instCreature = new p5(aNewCreatureSketch, 'creatureCanvas');
+
+    // Handler global simple para que 'a' y 'd' muevan el bicho aunque no tenga foco.
+    // Usa la referencia expuesta p._bug (creada en setup de aNewCreatureSketch).
+    document.addEventListener('keydown', (ev) => {
+      if (!instCreature || !instCreature._bug) return;
+      if (ev.key === 'd') {
+        instCreature._bug.acceleration.x += 0.5;
+      } else if (ev.key === 'a') {
+        instCreature._bug.acceleration.x -= 0.5;
+      }
+    });
+  </script>
+</body>
+</html>

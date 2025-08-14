@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar cipher & decipher - MUCHO CÓDIGO</title>
+    <meta name="description" content="Encriptador y desencriptador de cifrado César">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <a href="desafios.html" class="back-link">← Volver</a>
+    
+    <div class="container">
+        <h1>Caesar cipher & decipher</h1>
+        <p style="text-align: center; color: var(--text-gray); margin-bottom: 3rem;">(Just for lowercase)</p>
+        
+        <!-- ENCRIPTADOR -->
+        <div class="converter-section">
+            <h2 class="converter-title">CIPHER (ENCRIPTAR)</h2>
+            <div class="converter-content">
+                <div class="input-side">
+                    <div class="input-group">
+                        <label for="cipherKey">Key number:</label>
+                        <input type="number" id="cipherKey" placeholder="Ingresá un número" min="1" max="25" step="1">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="plainText">Message:</label>
+                        <input type="text" id="plainText" placeholder="tu mensaje en minúsculas">
+                    </div>
+                    
+                    <button class="convert-btn" id="encryptBtn">Encriptar mensaje</button>
+                </div>
+                
+                <div class="results-side">
+                    <div id="cipherResults" class="results-container">
+                        <div style="color: var(--text-gray); font-style: italic; text-align: center; padding: 20px;">
+                            Ingresá una clave y un mensaje para encriptar
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DESENCRIPTADOR -->
+        <div class="converter-section">
+            <h2 class="converter-title">DECIPHER (DESENCRIPTAR)</h2>
+            <div class="converter-content">
+                <div class="input-side">
+                    <div class="input-group">
+                        <label for="codedText">Coded text:</label>
+                        <input type="text" id="codedText" placeholder="texto encriptado en minúsculas">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="decipherKey">Key number (para una clave específica):</label>
+                        <input type="number" id="decipherKey" placeholder="Número entre 1 y 25" min="1" max="25" step="1">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button class="convert-btn" id="decryptSingleBtn">Una clave</button>
+                        <button class="convert-btn" id="decryptAllBtn">Todas las claves</button>
+                    </div>
+                </div>
+                
+                <div class="results-side">
+                    <div id="decipherResults" class="results-container" style="max-height: 400px; overflow-y: auto;">
+                        <div style="color: var(--text-gray); font-style: italic; text-align: center; padding: 20px;">
+                            Ingresá un texto encriptado y elegí si usar una clave específica o probar todas
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation-section">
+            <h2>¿Qué es el cifrado César?</h2>
+            <p>Parece que hace muchos siglos, un tal Julio César (sí, el que tenía dos nombres y ningún apellido) tenía que mandar un mensaje con información re <i>top secret</i> a algún otro romano, entonces quiso asegurarse de que ningún ser humano —excepto el destinatario, claro— supiera qué decía ese mensaje. Y como donde hay una necesidad nace un algoritmo, el tipo inventó la primera técnica de encriptación, y se llevó todos los laureles.</p>
+            <p>¿Y cómo lo hizo? El cifrado César es una técnica de cifrado por sustitución donde cada letra del texto original es desplazada un número fijo de posiciones en el alfabeto. Por ejemplo, con clave 3, la 'a' se convierte en 'd', la 'b' en 'e', y así sucesivamente.</p>
+            <p>Para desencriptar sin conocer la clave, se prueban todas las posibilidades (hay solo 25 claves posibles), lo que hace este cifrado muy fácil de romper pero perfecto para aprender conceptos básicos de criptografía.</p>
+            <p>Esta implementación solo funciona con letras minúsculas, manteniendo intactos espacios, números, símbolos y caracteres acentuados. ¿Por qué? Porque me pintó hacerlo así, pero hay muchas maneras de implementarlo.</p>
+            <p><strong>El desafío es: ¿se te ocurre otra manera de encriptar mensajes?</strong></p>
+        </div>
+    </div>
+
+    <footer class="contact">
+        <p>Si te interesan los archivos originales hechos en Pascal, podés descargarlos en 
+        <a href="../pas/caesar-cipher.pas" download>cipher</a> y 
+        <a href="../pas/caesar-decipher.pas" download>decipher</a>.</p>
+    </footer>
+
+    <script>
+        // === ELEMENTOS DEL DOM ===
+        const elements = {
+            cipherKey: document.getElementById('cipherKey'),
+            plainText: document.getElementById('plainText'),
+            codedText: document.getElementById('codedText'),
+            decipherKey: document.getElementById('decipherKey'),
+            encryptBtn: document.getElementById('encryptBtn'),
+            decryptSingleBtn: document.getElementById('decryptSingleBtn'),
+            decryptAllBtn: document.getElementById('decryptAllBtn'),
+            cipherResults: document.getElementById('cipherResults'),
+            decipherResults: document.getElementById('decipherResults')
+        };
+
+        // === MENSAJES Y CONSTANTES ===
+        const MESSAGES = {
+            cipherPlaceholder: 'Ingresá una clave y un mensaje para encriptar',
+            decipherPlaceholder: 'Ingresá un texto encriptado y elegí si usar una clave específica o probar todas',
+            errors: {
+                invalidKey: 'Error: Ingresá una clave entre 1 y 25',
+                emptyKey: 'Error: Ingresá una clave para encriptar',
+                emptyMessage: 'Error: Ingresá un mensaje para encriptar',
+                emptyCoded: 'Error: Ingresá un texto encriptado',
+                invalidChars: 'Error: Solo se permiten letras minúsculas, espacios, números y símbolos básicos'
+            }
+        };
+
+        // === UTILIDADES DE VALIDACIÓN ===
+        const Validator = {
+            isValidKey(key) {
+                return key && Number.isInteger(key) && key >= 1 && key <= 25;
+            },
+            
+            isEmpty(text) {
+                return !text || !text.trim();
+            },
+            
+            hasInvalidChars(text) {
+                // Rechaza mayúsculas específicamente (como dice la descripción)
+                return /[A-Z]/.test(text);
+            },
+            
+            sanitizeNumericInput(value) {
+                return value.replace(/[^0-9]/g, '').slice(0, 2);
+            }
+        };
+
+        // === FUNCIONES DE CIFRADO ===
+        const Caesar = {
+            encrypt(message, key) {
+                key = key % 26;
+                let codedText = '';
+                
+                for (let i = 0; i < message.length; i++) {
+                    let letter = message.charCodeAt(i);
+                    if (letter > 96 && letter < 123) { // Solo letras minúsculas
+                        letter = ((letter - 97 + key) % 26) + 97;
+                    }
+                    codedText += String.fromCharCode(letter);
+                }
+                
+                return codedText;
+            },
+
+            decrypt(codedText, key) {
+                let plainText = '';
+                
+                for (let i = 0; i < codedText.length; i++) {
+                    let letter = codedText.charCodeAt(i);
+                    if (letter > 96 && letter < 123) { // Solo letras minúsculas
+                        letter = ((letter - 97 - key + 26) % 26) + 97;
+                    }
+                    plainText += String.fromCharCode(letter);
+                }
+                
+                return plainText;
+            }
+        };
+
+        // === UTILIDADES DE UI ===
+        const UI = {
+            showPlaceholder(containerId, message) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = `
+                    <div style="color: var(--text-gray); font-style: italic; text-align: center; padding: 20px;">
+                        ${message}
+                    </div>
+                `;
+                container.classList.remove('show');
+            },
+            
+            showError(containerId, message) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = `
+                    <div class="result-item error-result">
+                        <div class="result-value" style="word-wrap: break-word; overflow-wrap: break-word; word-break: normal; hyphens: none;">${message}</div>
+                    </div>
+                `;
+                container.classList.add('show');
+            },
+            
+            showResult(containerId, label, value) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = `
+                    <div class="result-item">
+                        <div class="result-label">${label}</div>
+                        <div class="result-value" style="word-wrap: break-word; overflow-wrap: break-word; word-break: normal; hyphens: none;">${value}</div>
+                    </div>
+                `;
+                container.classList.add('show');
+            },
+            
+            showMultipleResults(containerId, results) {
+                const container = document.getElementById(containerId);
+                let resultsHTML = '';
+                
+                results.forEach(result => {
+                    resultsHTML += `
+                        <div class="result-item">
+                            <div class="result-label">${result.label}</div>
+                            <div class="result-value" style="word-wrap: break-word; overflow-wrap: break-word; word-break: normal; hyphens: none;">${result.value}</div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = resultsHTML;
+                container.classList.add('show');
+            }
+        };
+
+        // === FUNCIONES DE VALIDACIÓN ESPECÍFICA ===
+        function validateEncryption() {
+            const key = parseInt(elements.cipherKey.value);
+            const message = elements.plainText.value;
+            
+            if (Validator.isEmpty(elements.cipherKey.value)) {
+                UI.showError('cipherResults', MESSAGES.errors.emptyKey);
+                return null;
+            }
+            
+            if (!Validator.isValidKey(key)) {
+                UI.showError('cipherResults', MESSAGES.errors.invalidKey);
+                return null;
+            }
+            
+            if (Validator.isEmpty(message)) {
+                UI.showError('cipherResults', MESSAGES.errors.emptyMessage);
+                return null;
+            }
+            
+            if (Validator.hasInvalidChars(message)) {
+                UI.showError('cipherResults', MESSAGES.errors.invalidChars);
+                return null;
+            }
+            
+            return { key, message };
+        }
+
+        function validateDecryption(needsKey = false) {
+            const message = elements.codedText.value;
+            const key = parseInt(elements.decipherKey.value);
+            
+            if (Validator.isEmpty(message)) {
+                UI.showError('decipherResults', MESSAGES.errors.emptyCoded);
+                return null;
+            }
+            if (Validator.hasInvalidChars(message)) {
+                UI.showError('decipherResults', MESSAGES.errors.invalidChars);
+                return null;
+            }
+            if (needsKey) {
+                if (Validator.isEmpty(elements.decipherKey.value)) {
+                    UI.showError('decipherResults', MESSAGES.errors.emptyKey);
+                    return null;
+                }
+                
+                if (!Validator.isValidKey(key)) {
+                    UI.showError('decipherResults', MESSAGES.errors.invalidKey);
+                    return null;
+                }
+                
+                return { message, key };
+            }
+            
+            return { message };
+        }
+
+        // === EVENT LISTENERS PRINCIPALES ===
+        elements.encryptBtn.addEventListener('click', function() {
+            const validation = validateEncryption();
+            if (!validation) return;
+            
+            const { key, message } = validation;
+            const encrypted = Caesar.encrypt(message, key);
+            
+            UI.showResult('cipherResults', 'Coded text:', encrypted);
+        });
+
+        elements.decryptSingleBtn.addEventListener('click', function() {
+            const validation = validateDecryption(true);
+            if (!validation) return;
+            
+            const { message, key } = validation;
+            const decrypted = Caesar.decrypt(message, key);
+            
+            UI.showResult('decipherResults', `Key ${key}, plain text:`, decrypted);
+        });
+
+        elements.decryptAllBtn.addEventListener('click', function() {
+            const validation = validateDecryption(false);
+            if (!validation) return;
+            
+            const { message } = validation;
+            const results = [];
+            
+            for (let key = 1; key <= 25; key++) {
+                const decrypted = Caesar.decrypt(message, key);
+                results.push({
+                    label: `Key ${key}, plain text:`,
+                    value: decrypted
+                });
+            }
+            
+            UI.showMultipleResults('decipherResults', results);
+        });
+
+        // === EVENT LISTENERS PARA LIMPIAR RESULTADOS ===
+        function setupInputClearListeners() {
+            // Cipher inputs
+            [elements.plainText, elements.cipherKey].forEach(input => {
+                input.addEventListener('input', () => {
+                    UI.showPlaceholder('cipherResults', MESSAGES.cipherPlaceholder);
+                });
+            });
+            
+            // Decipher inputs
+            [elements.codedText, elements.decipherKey].forEach(input => {
+                input.addEventListener('input', () => {
+                    UI.showPlaceholder('decipherResults', MESSAGES.decipherPlaceholder);
+                });
+            });
+        }
+
+        // === EVENT LISTENERS PARA TECLA ENTER ===
+        function setupEnterKeyListeners() {
+            elements.plainText.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    elements.encryptBtn.click();
+                }
+            });
+
+            elements.cipherKey.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    elements.encryptBtn.click();
+                }
+            });
+
+            elements.codedText.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    if (elements.decipherKey.value.trim()) {
+                        elements.decryptSingleBtn.click();
+                    } else {
+                        elements.decryptAllBtn.click();
+                    }
+                }
+            });
+
+            elements.decipherKey.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    elements.decryptSingleBtn.click();
+                }
+            });
+        }
+
+        // === VALIDACIÓN DE INPUTS NUMÉRICOS ===
+        function setupNumericInputValidation() {
+            [elements.cipherKey, elements.decipherKey].forEach(input => {
+                input.addEventListener('input', function() {
+                    this.value = Validator.sanitizeNumericInput(this.value);
+                });
+            });
+        }
+
+        // === INICIALIZACIÓN ===
+        function init() {
+            setupInputClearListeners();
+            setupEnterKeyListeners();
+            setupNumericInputValidation();
+        }
+
+        // Inicializar cuando carga la página
+        init();
+    </script>
+</body>
+</html>
