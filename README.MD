@@ -8,7 +8,7 @@ Acá vas a encontrar desde resúmenes de materias hasta problemas para nada acad
 
 Espero que te guste la página :)
 
-Este es el link: ...
+Este es el link: https://matias-f-g.github.io/muchocodigo/
 
 
 ## <span style="color: #00aa00; font-size: 1.3em;">¿Para quiénes?</span>
