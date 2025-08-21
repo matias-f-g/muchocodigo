@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bullshit Crosswords - MUCHO CÓDIGO</title>
+    <meta name="description" content="Practice your English with this computer-themed crossword puzzle">
+    <link rel="icon" type="image/png" href="../img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Estilos específicos para el crucigrama */
+        .crossword-wrapper {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 20px;
+        }
+
+        .crossword-grid {
+            display: inline-block;
+            border: 2px solid var(--primary-green);
+            background-color: var(--bg-darker);
+            padding: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .crossword-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 0 auto;
+        }
+
+        .crossword-cell {
+            width: 40px;
+            height: 40px;
+            border: 0.2px solid rgba(50, 200, 50, 0.5);
+            position: relative;
+            background-color: #272727;
+        }
+
+        .crossword-cell.blocked {
+            background-color: var(--bg-darker);
+        }
+
+        .crossword-input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            color: white;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.3rem;
+            font-weight: bold;
+            outline: none;
+            caret-color: var(--primary-green);
+            cursor: pointer;
+        }
+
+        .crossword-input:focus {
+            background-color: rgba(0, 255, 0, 0.1);
+        }
+
+        .cell-number {
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            font-size: 0.65rem;
+            color: var(--text-gray);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Referencias del crucigrama */
+        .clues-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .clues-section h3 {
+            color: var(--primary-green);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            text-shadow: var(--glow-small);
+        }
+
+        .clue-item {
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .clue-number {
+            font-weight: bold;
+            color: var(--secondary-green);
+            margin-right: 5px;
+        }
+
+        .clue-text {
+            font-style: italic;
+        }
+
+        /* Modal de resultado */
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--bg-darker);
+            border: 2px solid var(--primary-green);
+            padding: 30px;
+            z-index: 1000;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .result-modal.show {
+            display: block;
+        }
+
+        .result-modal.success {
+            border-color: #00aaff;
+            animation: pulseBlue 1s infinite;
+        }
+
+        .result-modal.error {
+            border-color: #ff0000;
+            animation: pulseRed 1s infinite;
+        }
+
+        .modal-text {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-close {
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid var(--primary-green);
+            color: var(--primary-green);
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background-color: var(--primary-green);
+            color: var(--bg-dark);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+
+        .modal-overlay.show {
+            display: block;
+        }
+
+        /* Animaciones de brillo */
+        @keyframes pulseBlue {
+            0%, 100% { box-shadow: 0 0 10px #00aaff; }
+            50% { box-shadow: 0 0 30px #00aaff, 0 0 50px #00aaff; }
+        }
+
+        @keyframes pulseRed {
+            0%, 100% { box-shadow: 0 0 10px #ff0000; }
+            50% { box-shadow: 0 0 30px #ff0000, 0 0 50px #ff0000; }
+        }
+
+        @keyframes glowCorrect {
+            0%, 100% { 
+                border-color: var(--primary-green);
+                box-shadow: none;
+            }
+            50% { 
+                border-color: #00aaff;
+                box-shadow: 0 0 20px #00aaff, inset 0 0 10px rgba(0, 170, 255, 0.3);
+            }
+        }
+
+        @keyframes glowIncorrect {
+            0%, 100% { 
+                border-color: var(--primary-green);
+                box-shadow: none;
+            }
+            50% { 
+                border-color: #ff0000;
+                box-shadow: 0 0 20px #ff0000, inset 0 0 10px rgba(255, 0, 0, 0.3);
+            }
+        }
+
+        .crossword-grid.correct {
+            animation: glowCorrect 1s infinite;
+        }
+
+        .crossword-grid.incorrect {
+            animation: glowIncorrect 1s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .crossword-cell {
+                width: 30px;
+                height: 30px;
+            }
+
+            .crossword-input {
+                font-size: 1rem;
+            }
+
+            .cell-number {
+                font-size: 0.5rem;
+            }
+
+            .clues-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .crossword-grid {
+                padding: 10px;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="desafios.html" class="back-link">← Get Back!</a>
+    
+    <div class="container">
+        <h1><s>NO</s> BULLSHIT CROSSWORDS N°1</h1>
+        
+        <div class="crossword-wrapper">
+            <center>
+            <div class="crossword-grid" id="crosswordGrid">
+                <table class="crossword-table">
+                    <tbody id="crosswordTable">
+                        <!-- El crucigrama se genera dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            </center>
+
+            <!-- Botón Check debajo del crucigrama -->
+            <center style="margin-bottom: 3rem;">
+                <button id="checkButton" class="modal-close">Check</button>
+            </center>
+
+            <div class="clues-container">
+                <div class="clues-section">
+                    <h3>Across</h3>
+                    <div class="clue-item">
+                        <span class="clue-number">01.</span> The element that sits in the center of the hard drive and spins the platters.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">06.</span> Computer Science branch that studies robots.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">13.</span> <span class="clue-text">Artificial Random Acronym Inadmissible At Righteous Opinions.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">15.</span> <span class="clue-text">Computers Never Laugh.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">16.</span> <span class="clue-text">Structured Query Language.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">17.</span> <span class="clue-text">Unacceptable Map of Grand Onerous Auto.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">19.</span> A browser you should use properly if you don't want to die when you enter the dark web.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">21.</span> The opposite of disable.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">25.</span> <span class="clue-text">Transmission Control Protocol.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">27.</span> Like UX, but it's the other one.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">28.</span> <span class="clue-text">Exit Key.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">30.</span> That old Japanese company that basically invented arcade games.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">33.</span> The kind of creatures that appear in TV series like The Big Bang Theory.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">36.</span> That big circuit where every piece of the PC is connected.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">37.</span> A good acronym for a double negative.
+                    </div>
+                </div>
+                
+                <div class="clues-section">
+                    <h3>Down</h3>
+                    <div class="clue-item">
+                        <span class="clue-number">01.</span> A bunch of elements that are connected and work together.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">02.</span> When the CPU has no instructions to execute, the CPU is ___.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">03.</span> Information.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">04.</span> The typical inscription you should see on your headphones.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">05.</span> <span class="clue-text">Electronic Arts.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">06.</span> <span class="clue-text">Random Access Memory.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">07.</span> In assembly, this directive indicates the memory address where the program begins.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">08.</span> It may look like a shoe, but (long story short) we're talking about the process of starting a computer.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">10.</span> <span class="clue-text">Tech Control.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">11.</span> To declare an integer in C, the ___ keyword is used, followed by the variable name and a semicolon.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">12.</span> Just as it hides the sun, it can store your data without using your PC's hard drive.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">14.</span> The vowels, although not in the typical order.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">18.</span> <span class="clue-text">Acronyms Could lead to Nihilism.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">20.</span> CISC's enemy.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">22.</span> Onomatopoeia to designate lack of interest.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">23.</span> The place where you go to celebrate when your program works.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">24.</span> <span class="clue-text">Lost in The Bible.</span>
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">26.</span> In Argentina, we sometimes simply call a USB flash drive with the phallic word ___.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">29.</span> Something you see when you knock your opponent unconscious in Mortal Kombat.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">31.</span> The ancient Egyptian deity of the Sun.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">32.</span> An important register of the CPU.
+                    </div>
+                    <div class="clue-item">
+                        <span class="clue-number">35.</span> <span class="clue-text">Red Nickname.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="explanation-section">
+            <h2>Why did I make this crossword?</h2>
+            <p>When I was studying for my English final exam, I was pretty bored reading the assigned texts, so I tried something different to keep learning English. That's when I remembered something I've always liked to do and that can be useful for learning or practicing almost any subject: crossword puzzles.</p>
+            <p>So, for this occasion, I started making one in English using a lot of computer terms. It started off well, but then I ran into trouble because, as you may have noticed, it was really hard to join the existing words and fill in the blanks. So I started putting in a lot of bullshit: acronyms that don't exist and stuff like that.</p>
+            <p>In any case, I think it might be helpful to practice some vocabulary for the exam.</p>
+            <p><strong>The challenge is, of course, to make your own computer crossword puzzle, but this time in Spanish and much crazier (like a cryptic crossword puzzle)</strong>.</p>
+            <p>Have fun!</p>
+        </div>
+    </div>
+
+    <!-- Modal de resultado -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="result-modal" id="resultModal">
+        <div class="modal-text" id="modalText"></div>
+        <button class="modal-close" id="modalClose">Close</button>
+    </div>
+
+    <script>
+        // Definición de la solución del crucigrama
+        const SOLUTION = [
+            ['S','P','I','N','D','L','E','.','R','O','B','O','T','I','C','S'],
+            ['Y','.','D','.','A','R','A','I','A','R','O','.','C','N','L','.'],
+            ['S','Q','L','.','T','.','.','U','M','G','O','A','.','T','O','R'],
+            ['T','.','E','N','A','B','L','E','.','.','T','C','P','.','U','I'],
+            ['E','K','.','A','.','A','T','A','R','I','.','N','E','R','D','S'],
+            ['M','O','T','H','E','R','B','O','A','R','D','.','N','N','.','C']
+        ];
+
+        // Posiciones de los números en el crucigrama
+        const NUMBERS = {
+            '01': {row: 0, col: 0},
+            '02': {row: 0, col: 2},
+            '03': {row: 0, col: 4},
+            '04': {row: 0, col: 5},
+            '05': {row: 0, col: 6},
+            '06': {row: 0, col: 8},
+            '07': {row: 0, col: 9},
+            '08': {row: 0, col: 10},
+            '10': {row: 0, col: 12},
+            '11': {row: 0, col: 13},
+            '12': {row: 0, col: 14},
+            '13': {row: 1, col: 4},
+            '14': {row: 1, col: 7},
+            '15': {row: 1, col: 12},
+            '16': {row: 2, col: 0},
+            '17': {row: 2, col: 7},
+            '18': {row: 2, col: 11},
+            '19': {row: 2, col: 13},
+            '20': {row: 2, col: 15},
+            '21': {row: 3, col: 2},
+            '22': {row: 3, col: 3},
+            '23': {row: 3, col: 5},
+            '24': {row: 3, col: 6},
+            '25': {row: 3, col: 10},
+            '26': {row: 3, col: 12},
+            '27': {row: 3, col: 14},
+            '28': {row: 4, col: 0},
+            '29': {row: 4, col: 1},
+            '30': {row: 4, col: 5},
+            '31': {row: 4, col: 8},
+            '32': {row: 4, col: 9},
+            '33': {row: 4, col: 11},
+            '35': {row: 4, col: 13},
+            '36': {row: 5, col: 0},
+            '37': {row: 5, col: 12}
+        };
+
+        let currentGrid = [];
+        let allCellsFilled = false;
+
+        // Inicializar el crucigrama
+        function initCrossword() {
+            const table = document.getElementById('crosswordTable');
+            
+            for (let row = 0; row < SOLUTION.length; row++) {
+                currentGrid[row] = [];
+                const tr = document.createElement('tr');
+                
+                for (let col = 0; col < SOLUTION[row].length; col++) {
+                    const td = document.createElement('td');
+                    td.className = 'crossword-cell';
+                    
+                    if (SOLUTION[row][col] === '.') {
+                        td.classList.add('blocked');
+                        currentGrid[row][col] = '.';
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.className = 'crossword-input';
+                        input.maxLength = 1;
+                        input.dataset.row = row;
+                        input.dataset.col = col;
+                        
+                        // Eventos del input
+                        input.addEventListener('input', handleInput);
+                        input.addEventListener('keydown', handleKeydown);
+                        input.addEventListener('focus', handleFocus);
+                        
+                        td.appendChild(input);
+                        currentGrid[row][col] = '';
+                    }
+                    
+                    // Agregar número si corresponde
+                    for (let [num, pos] of Object.entries(NUMBERS)) {
+                        if (pos.row === row && pos.col === col) {
+                            const span = document.createElement('span');
+                            span.className = 'cell-number';
+                            span.textContent = num;
+                            td.appendChild(span);
+                        }
+                    }
+                    
+                    tr.appendChild(td);
+                }
+                
+                table.appendChild(tr);
+            }
+        }
+
+        // Manejar input de caracteres
+        function handleInput(e) {
+            const input = e.target;
+            let value = input.value;
+            
+            // Solo permitir letras del alfabeto inglés
+            value = value.replace(/[^a-zA-Z]/g, '');
+            
+            // Convertir a mayúsculas
+            value = value.toUpperCase();
+            
+            // Limitar a un carácter
+            if (value.length > 0) {
+                value = value[0];
+            }
+            
+            input.value = value;
+            
+            // Actualizar la grilla interna
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            currentGrid[row][col] = value;
+            
+            // Actualizar estado de completitud (sin comprobar automáticamente)
+            checkIfAllFilled();
+        }
+
+        // Manejar teclas especiales (navegación en las 4 direcciones, saltando celdas bloqueadas)
+        function handleKeydown(e) {
+            const input = e.target;
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            
+            // Prevenir caracteres no permitidos
+            if (!/^[a-zA-Z]$/.test(e.key) && !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete', 'Tab'].includes(e.key)) {
+                e.preventDefault();
+                return;
+            }
+            
+            if (e.key.startsWith('Arrow')) {
+                e.preventDefault();
+
+                let targetRow = row;
+                let targetCol = col;
+                let found = false;
+
+                if (e.key === 'ArrowUp') {
+                    for (let r = row - 1; r >= 0; r--) {
+                        if (SOLUTION[r][col] !== '.') { targetRow = r; targetCol = col; found = true; break; }
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    for (let r = row + 1; r < SOLUTION.length; r++) {
+                        if (SOLUTION[r][col] !== '.') { targetRow = r; targetCol = col; found = true; break; }
+                    }
+                } else if (e.key === 'ArrowLeft') {
+                    for (let c = col - 1; c >= 0; c--) {
+                        if (SOLUTION[row][c] !== '.') { targetRow = row; targetCol = c; found = true; break; }
+                    }
+                } else if (e.key === 'ArrowRight') {
+                    for (let c = col + 1; c < SOLUTION[0].length; c++) {
+                        if (SOLUTION[row][c] !== '.') { targetRow = row; targetCol = c; found = true; break; }
+                    }
+                }
+
+                if (found) {
+                    focusCell(targetRow, targetCol);
+                }
+            }
+        }
+
+        // Manejar el focus
+        function handleFocus(e) {
+            e.target.select();
+        }
+
+        // Enfocar una celda específica (se usa con coordenadas válidas)
+        function focusCell(row, col) {
+            const input = document.querySelector(`input[data-row="${row}"][data-col="${col}"]`);
+            if (input) {
+                input.focus();
+            }
+        }
+
+        // Verificar si todas las celdas están llenas (sin disparar verificación automática)
+        function checkIfAllFilled() {
+            let filled = true;
+            
+            for (let row = 0; row < SOLUTION.length; row++) {
+                for (let col = 0; col < SOLUTION[row].length; col++) {
+                    if (SOLUTION[row][col] !== '.' && currentGrid[row][col] === '') {
+                        filled = false;
+                        break;
+                    }
+                }
+                if (!filled) break;
+            }
+            
+            allCellsFilled = filled;
+
+            // Si se borra algo, quitamos animaciones para permitir seguir jugando
+            if (!filled) {
+                document.getElementById('crosswordGrid').classList.remove('correct', 'incorrect');
+            }
+        }
+
+        // Verificar la solución (se llama SOLO desde el botón Check cuando está todo lleno)
+        function checkSolution() {
+            let correct = true;
+            
+            for (let row = 0; row < SOLUTION.length; row++) {
+                for (let col = 0; col < SOLUTION[row].length; col++) {
+                    if (SOLUTION[row][col] !== '.' && SOLUTION[row][col] !== currentGrid[row][col]) {
+                        correct = false;
+                        break;
+                    }
+                }
+                if (!correct) break;
+            }
+            
+            const grid = document.getElementById('crosswordGrid');
+            const modal = document.getElementById('resultModal');
+            const modalText = document.getElementById('modalText');
+            const overlay = document.getElementById('modalOverlay');
+            
+            if (correct) {
+                grid.classList.add('correct');
+                modalText.textContent = "Congratulations! Your skills are exceptional. I think Sam Altman should come running and hire you. Have a nice day pal!";
+                modal.classList.add('success');
+                modal.classList.remove('error');
+
+                // ✅ Bloquear inputs cuando está resuelto bien
+                document.querySelectorAll('.crossword-input').forEach(inp => inp.disabled = true);
+            } else {
+                grid.classList.add('incorrect');
+                modalText.textContent = "So far, not good :( Check some letters";
+                modal.classList.add('error');
+                modal.classList.remove('success');
+            }
+            
+            modal.classList.add('show');
+            overlay.classList.add('show');
+        }
+
+        // Botón Check: controla todo el flujo de comprobación
+        document.getElementById('checkButton').addEventListener('click', function() {
+            // Actualizamos si está completo
+            checkIfAllFilled();
+
+            const grid = document.getElementById('crosswordGrid');
+            const modal = document.getElementById('resultModal');
+            const modalText = document.getElementById('modalText');
+            const overlay = document.getElementById('modalOverlay');
+
+            // Limpiar estados previos
+            grid.classList.remove('correct', 'incorrect');
+            modal.classList.remove('success', 'error');
+
+            if (!allCellsFilled) {
+                modalText.textContent = "You are missing some letters";
+                modal.classList.add('error');
+                modal.classList.remove('success');
+                modal.classList.add('show');
+                overlay.classList.add('show');
+                return;
+            }
+
+            // Si está completo, recién ahí verificamos la solución
+            checkSolution();
+        });
+
+        // Cerrar el modal
+        document.getElementById('modalClose').addEventListener('click', function() {
+            const modal = document.getElementById('resultModal');
+            const overlay = document.getElementById('modalOverlay');
+            const grid = document.getElementById('crosswordGrid');
+            
+            modal.classList.remove('show');
+            overlay.classList.remove('show');
+            
+            // Si era incorrecto, remover la animación para permitir que el usuario siga intentando
+            if (modal.classList.contains('error')) {
+                grid.classList.remove('incorrect');
+            }
+        });
+
+        // También cerrar al hacer clic en el overlay
+        document.getElementById('modalOverlay').addEventListener('click', function() {
+            document.getElementById('modalClose').click();
+        });
+
+        // Inicializar cuando carga la página
+        initCrossword();
+    </script>
+</body>
+</html>

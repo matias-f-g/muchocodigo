@@ -25,9 +25,9 @@ Después pensé: estaría bueno compartirlos y que más gente pueda sumar progra
 
 ## <span style="color: #00aa00; font-size: 1.3em;">¿Cómo participar?</span>
 
-La idea es que la página siga sumando desafíos, así que si se te ocurrió algún problema (con o sin solución) que te parezca que pueda sumarse a esa sección, avisame nomás.
+La idea es que la página siga sumando nuevos desafíos y nuevas soluciones a los desafíos ya existentes, así que si hiciste algo de eso y querés compartirlo, avisame nomás. Mi mail es matuchitofg@gmail.com.
 
-Lo ideal sería que me pases un archivo .html (con o sin su .js) ya armado para que lo sume, o que me pases el link de tu página. Si lo tenés en algún lenguaje extraño que no funciona bien en internet, trataré de adaptarlo al formato mencionado.
+Lo ideal sería que me pases un archivo .html (con o sin su .js) ya armado para que lo suba, o que me pases el link de tu página. Si lo tenés en algún lenguaje extraño que no funciona bien en internet, puedo intentar adaptarlo al formato mencionado.
 
 Desde ya, agregaría en alguna parte que vos sos el autor o la autora del desafío.
 
