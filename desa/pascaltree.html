@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pascal's tree - MUCHO CÓDIGO</title>
+    <meta name="description" content="Genera triángulos de Pascal" />
+    <link rel="icon" type="image/png" href="../img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Estilos específicos adicionales para el triángulo */
+        .triangle-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: fit-content;
+            margin: 0 auto;
+        }
+        
+        .triangle-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 8px 0;
+            white-space: nowrap;
+        }
+        
+        .triangle-number {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 80px;
+            padding: 5px 10px;
+            margin: 0 5px;
+            color: var(--primary-green);
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            text-shadow: var(--glow-tiny);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .triangle-number:hover {
+            text-shadow: var(--glow-medium);
+            transform: scale(1.1);
+        }
+
+        .converter-section {
+            margin: 6rem 0;
+            border: 2px solid var(--primary-green);
+            background-color: var(--bg-darker);
+            width: 95vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -47.5vw;
+            margin-right: -47.5vw;
+        }
+        
+        .triangle-container {
+            padding: 40px 20px;
+            background-color: var(--bg-dark);
+            min-height: 200px;
+            overflow-x: auto;
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .triangle-container.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .triangle-number {
+                min-width: 50px;
+                font-size: 0.85rem;
+                padding: 3px 6px;
+                margin: 0 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="desafios.html" class="back-link">← Volver</a>
+
+    <div class="container">
+        <h1>El triángulo de Pascal <i>reloaded</i></h1>
+
+        <div class="converter-section">
+            <h2 class="converter-title">Generador de triángulos</h2>
+            <div class="code-content">
+                <div class="input-group">
+                    <label for="initialNumber">Valor inicial:</label>
+                    <input 
+                        type="text" 
+                        id="initialNumber" 
+                        placeholder="Podría ser, por ejemplo, el 1, el 3.14 o el -7"
+                        autocomplete="off"
+                    />
+                    <span class="error-message" id="initialError"></span>
+                </div>
+                <div class="input-group">
+                    <label for="rowCount">Cantidad de renglones:</label>
+                    <input 
+                        type="text" 
+                        id="rowCount" 
+                        placeholder="Por ejemplo, 10"
+                        autocomplete="off"
+                    />
+                    <span class="error-message" id="rowError"></span>
+                </div>
+                <button class="convert-btn" onclick="generateTriangle()">Generar triángulo</button>
+                
+                <div class="triangle-container" id="triangleContainer"></div>
+            </div>
+        </div>
+
+        <div class="explanation-section">
+            <h2>Pero, ¿qué es esto?</h2>
+            <p>El triángulo de Pascal puede entenderse como una especie de sucesión aritmética, donde cada número es la suma de los dos números que tiene arriba (bueno, normalmente cada número tiene dos números arriba, pero puede tener uno solo (si es el primer o el último número del renglón), o ninguno (si es el primer número del triángulo)).</p>
+            <p>Lo conocemos con ese nombre porque el matemático francés Blaise Pascal hizo un estudio muy completo sobre este triángulo en el siglo XVII, pero ya era conocido en varios otros países desde hace varios siglos. Por eso en otros lugares se lo conoce con otros nombres.</p>
+            <p>Lo interesante es que, a pesar de su simpleza, tiene muchas propiedades muy flasheras. Son tantas que no conviene resumirlas acá. Además, <a href="https://es.wikipedia.org/wiki/Tri%C3%A1ngulo_de_Pascal" target="_blank" rel="noopener noreferrer">en Wikipedia ya están bastante bien explicadas</a>.</p>
+            <p>Hasta ahí, el triángulo de Pascal. Pero acá no tenemos eso. Acá tenemos el triángulo de Pascal <i>reloaded</i>. ¿Por qué <i>reloaded</i>? Porque este triángulo no necesariamente empieza por el 1. Empieza por donde vos quieras.</p>
+        </div>
+
+        <div class="explanation-section">
+            <h2>¿Por qué hice este programa?</h2>
+            <p>Por tres cosas.</p>
+            <p>1. Porque para poder resolver otro de los desafíos locos que hay en este sitio web necesitás saber lo que es el triángulo de Pascal, y viene bien tener esa data a mano.</p>
+            <p>2. Porque hace poco en Taller de Programación (una materia de la facu) estuvimos estudiando árboles, y me pareció que el triángulo de Pascal venía de diez para poner en práctica esos conocimientos. Por supuesto que se podría haber hecho de forma más simple y eficiente, sobre todo considerando que le puse un límite a la cantidad de renglones. Pero bueno, tenía ganas de jugar a crear nuevos tipos de datos. Si mirás el archivo original hecho en Pascal, vas a poder ver cómo está hecho el árbol, y vas a notar que no es un árbol común y corriente: es una especie de híbrido entre un árbol y una lista doblemente enlazada. (<i>By the way</i>, por eso el otro nombre de esta página es "El árbol de Pascal").</p>
+            <p>3. Porque al hacerlo yo mismo, tengo la libertad de editarlo como me pinte y puedo, por ejemplo, agregarle la opción de que en vez de empezar desde el 1 empiece desde un número cualquiera, como el -1, el 2, el 3.14 o el 7, para ver qué se forma con esos números.</p>
+            <p><strong>El desafío es crear otra estructura numérica e implementar un programa que la genere</strong>. Puede ser partiendo de alguna ya existente (como la pirámide de Pascal o el triángulo armónico de Leibniz), o partiendo desde cero, inventando una estructura completamente original.</p>
+        </div>
+    </div>
+
+    <footer class="contact">
+        <p>Si te interesa el archivo original hecho en Pascal, podés <a href="../pas/arbol-de-pascal.pas" download>descargarlo aquí mismo</a>.</p>
+    </footer>
+
+    <script>
+        // Validación de entrada para número inicial (permite decimales)
+        document.getElementById('initialNumber').addEventListener('input', function(e) {
+            let value = e.target.value;
+            
+            // Permitir números negativos, punto decimal y números
+            let filtered = '';
+            let hasDecimal = false;
+            let hasMinus = false;
+            
+            for (let i = 0; i < value.length; i++) {
+                const char = value[i];
+                
+                if (char === '-' && i === 0 && !hasMinus) {
+                    filtered += char;
+                    hasMinus = true;
+                } else if (char === '.' && !hasDecimal) {
+                    filtered += char;
+                    hasDecimal = true;
+                } else if (char >= '0' && char <= '9') {
+                    filtered += char;
+                }
+            }
+            
+            e.target.value = filtered;
+        });
+
+        // Validación de entrada para cantidad de renglones (solo enteros positivos)
+        document.getElementById('rowCount').addEventListener('input', function(e) {
+            let value = e.target.value;
+            let filtered = '';
+            
+            for (let i = 0; i < value.length; i++) {
+                const char = value[i];
+                if (char >= '0' && char <= '9') {
+                    filtered += char;
+                }
+            }
+            
+            // Limitar a 24
+            if (filtered !== '' && parseInt(filtered) > 24) {
+                filtered = '24';
+            }
+            
+            e.target.value = filtered;
+        });
+
+        // Estilos para mensajes de error
+        const errorStyle = `
+            color: #ff6464;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        `;
+        
+        document.getElementById('initialError').style.cssText = errorStyle;
+        document.getElementById('rowError').style.cssText = errorStyle;
+
+        function generateTriangle() {
+            // Limpiar mensajes de error
+            const initialError = document.getElementById('initialError');
+            const rowError = document.getElementById('rowError');
+            initialError.style.display = 'none';
+            rowError.style.display = 'none';
+            
+            const initialInput = document.getElementById('initialNumber').value;
+            const rowInput = document.getElementById('rowCount').value;
+            
+            // Validaciones
+            let hasError = false;
+            
+            if (!initialInput) {
+                initialError.textContent = 'Por favor, ingresá un número inicial';
+                initialError.style.display = 'block';
+                hasError = true;
+            }
+            
+            const initialNumber = parseFloat(initialInput);
+            if (isNaN(initialNumber)) {
+                initialError.textContent = 'Debe ingresar algún valor inicial (puede ser cualquier número real)';
+                initialError.style.display = 'block';
+                hasError = true;
+            }
+            
+            if (!rowInput) {
+                rowError.textContent = 'Por favor, ingresá la cantidad de renglones';
+                rowError.style.display = 'block';
+                hasError = true;
+            }
+            
+            const rowCount = parseInt(rowInput);
+            if (isNaN(rowCount) || rowCount < 1) {
+                if (isNaN(rowCount)) {
+                    rowError.textContent = 'Debe ingresar alguna cantidad (tiene que ser un número entero entre 1 y 24)';
+                } else {
+                    rowError.textContent = 'Debe ingresar alguna cantidad válida (tiene que ser un número entero entre 1 y 24)';
+                }
+                rowError.style.display = 'block';
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            // Generar el triángulo
+            const triangle = [];
+            triangle[0] = [initialNumber];
+            
+            for (let i = 1; i < rowCount; i++) {
+                triangle[i] = [];
+                for (let j = 0; j <= i; j++) {
+                    if (j === 0 || j === i) {
+                        triangle[i][j] = initialNumber;
+                    } else {
+                        triangle[i][j] = triangle[i-1][j-1] + triangle[i-1][j];
+                    }
+                }
+            }
+            
+            // Mostrar el triángulo
+            displayTriangle(triangle);
+        }
+
+        function displayTriangle(triangle) {
+            const container = document.getElementById('triangleContainer');
+            container.innerHTML = '';
+            
+            // Crear un wrapper para el triángulo con width fit-content
+            const wrapper = document.createElement('div');
+            wrapper.className = 'triangle-wrapper';
+            
+            // Calcular el ancho necesario de cada número
+            let maxNumberWidth = 0;
+            
+            // Revisar todos los números para encontrar el más ancho
+            for (let row of triangle) {
+                for (let num of row) {
+                    let displayNum = formatNumber(num);
+                    let numberWidth = getTextWidth(displayNum);
+                    maxNumberWidth = Math.max(maxNumberWidth, numberWidth);
+                }
+            }
+            
+            // Generar cada fila
+            for (let rowIndex = 0; rowIndex < triangle.length; rowIndex++) {
+                const row = triangle[rowIndex];
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'triangle-row';
+                
+                for (let num of row) {
+                    const numSpan = document.createElement('span');
+                    numSpan.className = 'triangle-number';
+                    
+                    let displayNum = formatNumber(num);
+                    numSpan.textContent = displayNum;
+                    
+                    // Establecer un ancho mínimo basado en el número más largo, con padding
+                    numSpan.style.minWidth = Math.max(80, maxNumberWidth + 20) + 'px';
+                    
+                    rowDiv.appendChild(numSpan);
+                }
+                
+                wrapper.appendChild(rowDiv);
+            }
+            
+            container.appendChild(wrapper);
+            container.classList.add('show');
+            
+            // Centrar el scroll horizontal si es necesario
+            setTimeout(() => {
+                if (container.scrollWidth > container.clientWidth) {
+                    const scrollLeft = (container.scrollWidth - container.clientWidth) / 2;
+                    container.scrollLeft = scrollLeft;
+                }
+            }, 100);
+        }
+        
+        function formatNumber(num) {
+            // Formatear el número para que no sea muy largo
+            let displayNum;
+            if (Number.isInteger(num)) {
+                displayNum = num.toString();
+            } else {
+                // Limitar decimales a 3 posiciones
+                displayNum = num.toFixed(3).replace(/\.?0+$/, '');
+            }
+            
+            // Si el número es muy largo, usar notación científica
+            if (displayNum.length > 12) {
+                displayNum = num.toExponential(2);
+            }
+            
+            return displayNum;
+        }
+        
+        function getTextWidth(text) {
+            // Crear un elemento temporal para medir el ancho del texto
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.font = "0.95rem 'Courier New', monospace";
+            return context.measureText(text).width;
+        }
+
+        // Permitir generar con Enter
+        document.getElementById('initialNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') generateTriangle();
+        });
+        
+        document.getElementById('rowCount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') generateTriangle();
+        });
+    </script>
+</body>
+</html>
