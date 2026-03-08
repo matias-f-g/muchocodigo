@@ -460,9 +460,9 @@ def animacionGanadora(lab, posX, posY, nivel):
         pygame.draw.circle(DISPLAYSURF, COLOR_JUGADOR, (posX, posY), radio)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
-    pygame.time.wait(500)
 
     if nivel < CANT_NIVELES:
+        pygame.time.wait(500)
         textSurfaceObj = FUENTE_COMUN.render("¡Felicitaciones!", True, COLOR_LLEGADA)
         textRectObj = textSurfaceObj.get_rect()
         textRectObj.center = (ANCHO_PANTALLA // 2, ALTO_PANTALLA // 2 - 60)
@@ -472,6 +472,15 @@ def animacionGanadora(lab, posX, posY, nivel):
         textRectObj.center = (ANCHO_PANTALLA // 2, ALTO_PANTALLA // 2 + 20)
         DISPLAYSURF.blit(textSurfaceObj, textRectObj)
     else:
+        while (radio < ANCHO_PANTALLA):
+            chequearCierreDelPrograma()
+            radio += suma
+            suma += 1
+            DISPLAYSURF.fill(COLOR_FONDO)
+            pygame.draw.circle(DISPLAYSURF, COLOR_JUGADOR, (posX, posY), radio)
+            pygame.display.update()
+            FPSCLOCK.tick(FPS)
+        pygame.time.wait(500)
         textSurfaceObj = FUENTE_COMUN.render("¡Bien ahí pequeño maze runner!", True, COLOR_LLEGADA)
         textRectObj = textSurfaceObj.get_rect()
         textRectObj.center = (ANCHO_PANTALLA // 2, ALTO_PANTALLA // 2 - 60)

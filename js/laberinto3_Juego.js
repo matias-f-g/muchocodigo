@@ -604,7 +604,7 @@ async function animacionGanadora(canvas, lab, pX, pY, nivel) {
         ctx.fill();
         await sleep(msFrame);
     }
-    await sleep(500);
+    
 
     ctx.font         = 'bold 32px monospace';
     ctx.fillStyle    = COLOR_LLEGADA;
@@ -612,9 +612,26 @@ async function animacionGanadora(canvas, lab, pX, pY, nivel) {
     ctx.textBaseline = 'middle';
 
     if (nivel < CANT_NIVELES) {
+        await sleep(500);
         ctx.fillText('¡Felicitaciones!', ANCHO_PANTALLA / 2, ALTO_PANTALLA / 2 - 60);
         ctx.fillText(`Pasaste al nivel ${nivel}`, ANCHO_PANTALLA / 2, ALTO_PANTALLA / 2 + 20);
     } else {
+        while (radio < ANCHO_PANTALLA) {
+            radio += suma;
+            suma  += 1;
+            ctx.fillStyle = COLOR_FONDO;
+            ctx.fillRect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA);
+            ctx.beginPath();
+            ctx.arc(pX, pY, radio, 0, Math.PI * 2);
+            ctx.fillStyle = COLOR_JUGADOR;
+            ctx.fill();
+            await sleep(msFrame);
+        }
+        await sleep(500);
+        ctx.font         = 'bold 32px monospace';
+        ctx.fillStyle    = COLOR_LLEGADA;
+        ctx.textAlign    = 'center';
+        ctx.textBaseline = 'middle';
         ctx.fillText('¡Bien ahí pequeño maze runner!', ANCHO_PANTALLA / 2, ALTO_PANTALLA / 2 - 60);
         ctx.fillText('Ganaste todos los niveles que había :)', ANCHO_PANTALLA / 2, ALTO_PANTALLA / 2 + 20);
     }
