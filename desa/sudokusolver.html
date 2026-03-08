@@ -56,8 +56,14 @@
             <h2>¿Por qué hice este programa?</h2>
             <p>Un día estaba charlando con una amiga y me contó que en su tiempo libre estaba jugando al sudoku. Y por alguna razón, pensé: ¿Pascal podrá resolverlos?</p>
             <p>Así que volví a mirar algunos sudokus para recordarme a mí mismo qué estrategia usaba, y traté de plasmar ese algoritmo en un programa. No sé mucho de sudokus, pero me imagino que es la estrategia más básica que hay.</p>
-            <p>Después de mucho ensayo y error, cuando ya me creía perdido en una selva de arrays, finalmente funcionó.</p>
-            <p>Por supuesto que solamente puede resolver los sudokus de nivel fácil. Cuando es difícil y no lo logra, te avisa que no se pudo completar ni con 9000 iteraciones.</p>
+            <p>En resumen, es así:</p>
+            <div style="margin-left: 40px;">
+                <p>Cada espacio vacío tiene inicialmente 9 valores posibles (del 1 al 9).</p>
+                <p>Después, se eliminan los valores inválidos, es decir, se quitan los números que ya estén en el mismo subcuadrado, en el mismo renglón y en la misma columna.</p>
+                <p>Si después de esa eliminación queda exactamente un valor, ese valor es el valor correcto, y se agrega al sudoku como un valor conocido.</p>
+                <p>Se repite este proceso una y otra vez hasta que no haya ningún espacio vacío (en tal caso, el sudoku habrá quedado resuelto), o hasta que la cantidad de iteraciones sea exageradamente grande, digamos, 9000 (en tal caso, el programa avisa que no se pudo resolver el sudoku).</p>
+            </div>
+            <p>Finalmente, quedó un programa bastante mal escrito (se podría haber hecho más simple, sobre todo si usaba Python), y solamente puede resolver sudokus sencillos. Pero bueno, funciona, y fue alto desafío: en el camino aprendí mucho a manejar matrices.</p>
             <p>Después me puse a mirar en Wikipedia y parece que ya se estudiaron millones de algoritmos que hacen estas cosas, tanto para crearlos como para resolverlos.</p>
             <p>Así que bueno, ahí hay <strong>un gran desafío: avanzar hacia un algoritmo que pueda resolver sudokus más difíciles</strong> (sin copiarse de los algoritmos que ya existen, obvio, si no pierde un poco la gracia).</p>
             <p>Que la fuerza te acompañe.</p>

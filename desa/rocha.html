@@ -8,17 +8,28 @@
     <link rel="icon" type="image/png" href="../img/favicon.png">
     <link rel="stylesheet" href="../styles.css">
     <style>
+        /* Mantenemos tus estilos originales */
         .story-text {
             background-color: var(--bg-darker);
             border-left: 4px solid var(--primary-green);
             padding: 25px;
             margin: 30px 0;
-            font-size: 0.95rem;
-            line-height: 1.5;
+            font-size: 1rem;
+            line-height: 1.75;
             color: var(--text-light);
             text-align: justify;
         }
         
+        /* Ajuste para los botones de la narrativa */
+        .story-btn {
+            margin: 40px auto; /* Más espacio arriba y abajo */
+            max-width: 350px;  /* Lo hacemos más ancho */
+            padding: 18px 40px; /* Más aire interno para que sea más robusto */
+            font-size: 0.9rem;  /* Letra un poco más grande */
+            text-transform: uppercase; /* Opcional: le da un toque más formal/masónico */
+            letter-spacing: 2px; /* Espaciado entre letras para mejorar la estética */
+        }
+
         .story-header {
             text-align: center;
             font-size: 1.1rem;
@@ -47,7 +58,6 @@
             margin-bottom: 20px;
         }
         
-        /* Se mantiene este estilo porque el color del label es específico para esta página */
         .input-group label {
             display: block;
             margin-bottom: 8px;
@@ -55,7 +65,6 @@
             font-size: 0.9rem;
         }
         
-        /* Se usa .convert-btn de styles.css, pero se añade el estilo para :disabled */
         .convert-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -80,7 +89,6 @@
             color: var(--primary-green);
         }
         
-        /* Se actualizan los selectores para usar las clases genéricas */
         .converter-section.completed {
             opacity: 0.7;
             border-color: var(--secondary-green);
@@ -118,19 +126,8 @@
         }
 
         @media (max-width: 768px) {
-            .input-pair {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .story-text {
-                padding: 20px;
-                font-size: 0.9rem;
-            }
-            
-            .code-content { /* Se ajusta el padding del ex .puzzle-content */
-                padding: 20px;
-            }
+            .input-pair { grid-template-columns: 1fr; gap: 10px; }
+            .story-text { padding: 20px; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -141,23 +138,35 @@
         <h1>El Tesoro de Dardo Rocha</h1>
         
         <div class="story-text">
-            <p>Cualquier platense sabe dónde queda el Dardo Rocha, y casi cualquiera sabe que la persona homenajeada por ese edificio fue el fundador de la ciudad de La Plata. Empero, casi todos desconocen los manuscritos perdidos (hasta hace una década) de Dardo Rocha. Muchos de ellos abordan, naturalmente, cuestiones de francmasonería que el autor nunca quiso publicar, pero que sí tuvo intenciones de compartirlas <i>post mortem</i> con los miembros de su logia. Por razones desconocidas, los manuscritos no fueron hallados por sus supuestos destinatarios (ni por nadie más), hasta que un empleado de la Biblioteca de la UNLP los encontró, por mera casualidad (y mucho fisgonear), dentro de unos cajones abandonados que se encontraban en un depósito en desuso. Sin dudas, el más intrigante de ellos, es el que a continuación se detalla. Para completar la lectura, usted deberá ir respondiendo correctamente a los acertijos que se le irán presentando.</p>
-            
-            <div class="manuscript-text">
-                <p>A los queridos sucesores de la Constancia Nº 7: es de mi más alto agrado legarles una misión: recuperar aquello que vuestra generación, o la siguiente, echará en falta, y que deberá restaurar si quiere ver a su tierra en paz.</p>
-                
-                <p>Para comodidad de todas las partes involucradas, para representar simbólicamente esa carencia futura, elegí un punto ubicado en nuestra luminosa Atenas de América. Sin embargo, no corresponde develar las coordenadas exactas sin antes verificar la identidad de quien llegara a leer estas palabras. Por este motivo, las coordenadas están cifradas, al modo en que una allium cepa se conserva a sí misma. Cuando develen las coordenadas, descubrirán el lugar y el mesaje que lleva oculto.</p>
+            <div id="part1">
+                <p>Cualquier platense sabe dónde queda el Pasaje Dardo Rocha, y casi cualquiera sabe que la persona homenajeada por ese edificio fue el fundador de la ciudad de La Plata. Empero, casi todos desconocen los manuscritos perdidos (hasta hace una década) de Dardo Rocha. Muchos de ellos abordan, naturalmente, cuestiones de francmasonería que el autor nunca quiso publicar, pero que sí tuvo intenciones de compartirlas <i>post mortem</i> con los miembros de su logia.</p>
+                <button class="btn story-btn" onclick="showPart2()">Seguir leyendo</button>
+            </div>
+
+            <div id="part2" class="hidden">
+                <p>Por razones desconocidas, los manuscritos no fueron hallados por sus supuestos destinatarios (ni por nadie más), hasta que un empleado de la Biblioteca de la UNLP los encontró por mera casualidad dentro de unos cajones abandonados que se encontraban en un depósito en desuso. Sin dudas, el más intrigante de esta colección es la carta dirigida a los "herederos" de su logia, ya que atesora una valiosa información encriptada con acertijos.</p>
+                <p>A continuación, transcribimos dicha carta:</p>
+                <button class="btn story-btn" onclick="showLetter()">Leer carta</button>
+            </div>
+
+            <div id="manuscript-container" class="hidden">
+                <div class="manuscript-text">
+                    <p>A los queridos sucesores de la Constancia Nº 7: es de mi más alto agrado legarles una misión: recuperar aquello que vuestra generación, o la siguiente, echará en falta, y que deberá restaurar si quiere ver a su tierra en paz.</p>
+                    <p>Para comodidad de todas las partes involucradas, para representar simbólicamente esa carencia futura, elegí un punto ubicado en nuestra luminosa Atenas de América. Sin embargo, no corresponde develar las coordenadas exactas sin antes verificar la identidad de quien llegara a leer estas palabras. Por este motivo, las coordenadas están cifradas, al modo en que una allium cepa se conserva a sí misma. Cuando develen las coordenadas, descubrirán el lugar y el mensaje que lleva oculto.</p>
+                    <p style="text-align: right;">Su afectísimo servidor,</p>
+                    <p style="text-align: right;">Dardo Rocha</p>
+                </div>
+                <button class="btn story-btn" onclick="startPuzzles()">Iniciar decodificación</button>
             </div>
         </div>
 
-        <div class="converter-section" id="puzzle1">
+        <div class="converter-section hidden" id="puzzle1">
             <h2 class="converter-title">Par 1</h2>
             <div class="code-content">
                 <div class="puzzle-question">
                     <p><strong>La cantidad de cuadras entre plazas es un número perfecto. El primer elemento es igual al doble de ese número.</strong></p>
                     <p><strong>Sea <i>n</i> el número perfecto anterior. El segundo elemento es la suma entre <i>n</i> y el mayor número que aparece en el renglón <i>n</i> del triángulo de Pascal.</strong></p>
                 </div>
-                
                 <div class="input-pair">
                     <div class="input-group">
                         <label for="pair1_elem1">Primer elemento:</label>
@@ -168,7 +177,6 @@
                         <input type="number" id="pair1_elem2" placeholder="...">
                     </div>
                 </div>
-                
                 <button class="convert-btn" onclick="checkPair(1, 31, 77)">Verificar Par 1</button>
                 <div id="feedback1" class="feedback hidden"></div>
             </div>
@@ -181,7 +189,6 @@
                     <p><strong>El primer elemento, es el primer cubo.</strong></p>
                     <p><strong>El segundo, es el tercer cubo.</strong></p>
                 </div>
-                
                 <div class="input-pair">
                     <div class="input-group">
                         <label for="pair2_elem1">Primer elemento:</label>
@@ -192,7 +199,6 @@
                         <input type="number" id="pair2_elem2" placeholder="...">
                     </div>
                 </div>
-                
                 <button class="convert-btn" onclick="checkPair(2, 56, 52)">Verificar Par 2</button>
                 <div id="feedback2" class="feedback hidden"></div>
             </div>
@@ -205,7 +211,6 @@
                     <p><strong>El primer elemento es el segundo elemento del sistema de base dos, tal como lo propusiera Leibniz.</strong></p>
                     <p><strong>El segundo elemento, es el primo anterior a nuestra logia.</strong></p>
                 </div>
-                
                 <div class="input-pair">
                     <div class="input-group">
                         <label for="pair3_elem1">Primer elemento:</label>
@@ -216,7 +221,6 @@
                         <input type="number" id="pair3_elem2" placeholder="...">
                     </div>
                 </div>
-                
                 <button class="convert-btn" onclick="checkPair(3, 56, 1)">Verificar Par 3</button>
                 <div id="feedback3" class="feedback hidden"></div>
             </div>
@@ -228,7 +232,6 @@
                 <div class="cipher-text">
                     zlh sh jpbkhk bu wshuv jhyalzphuv kvukl ls lql e lz sh jhssl buv f ls lql f lz sh hclupkh zlaluah f kvz, lujbluayl ls jluayv kl sh jpyjbumlylujph klmpupkh wvy svz aylz whylz vykluhkvz hualypvylz
                 </div>
-                
                 <div class="input-pair">
                     <div class="input-group">
                         <label for="pair4_elem1">Primer elemento:</label>
@@ -239,7 +242,6 @@
                         <input type="number" id="pair4_elem2" placeholder="...">
                     </div>
                 </div>
-                
                 <button class="convert-btn" onclick="checkPair(4, 56, 77)">Verificar Coordenadas Finales</button>
                 <div id="feedback4" class="feedback hidden"></div>
             </div>
@@ -256,7 +258,26 @@
     </footer>
 
     <script>
-        // Función que simula el check del Pascal original
+        /* --- NUEVAS FUNCIONES DE NAVEGACIÓN --- */
+        function showPart2() {
+            document.getElementById('part1').classList.add('hidden');
+            document.getElementById('part2').classList.remove('hidden');
+        }
+
+        function showLetter() {
+            document.getElementById('part2').classList.add('hidden');
+            document.getElementById('manuscript-container').classList.remove('hidden');
+        }
+
+        function startPuzzles() {
+            // No ocultamos la carta (según tu instrucción), solo quitamos el botón de inicio
+            event.target.classList.add('hidden'); 
+            document.getElementById('puzzle1').classList.remove('hidden');
+            // Scroll suave hacia el primer acertijo
+            document.getElementById('puzzle1').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        /* --- LÓGICA ORIGINAL MANTENIDA --- */
         function check(x) {
             x = (x * 997) + 1;
             x = (x - 3) * 3;
@@ -280,17 +301,16 @@
 
             if (check1 === expectedCheck1 && check2 === expectedCheck2) {
                 showFeedback(feedbackDiv, "¡Correcto! Procediendo al siguiente par...", "success");
-                
-                // Marcar como completado
                 document.getElementById(`puzzle${pairNumber}`).classList.add('completed');
                 completedPuzzles++;
                 
-                // Mostrar siguiente puzzle o mensaje final
                 setTimeout(() => {
                     if (pairNumber < 4) {
                         document.getElementById(`puzzle${pairNumber + 1}`).classList.remove('hidden');
+                        document.getElementById(`puzzle${pairNumber + 1}`).scrollIntoView({ behavior: 'smooth' });
                     } else {
                         document.getElementById('finalMessage').classList.remove('hidden');
+                        document.getElementById('finalMessage').scrollIntoView({ behavior: 'smooth' });
                     }
                 }, 1500);
             } else {
@@ -304,7 +324,6 @@
             element.classList.remove('hidden');
         }
 
-        // Permitir Enter para verificar
         document.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const activeInputs = document.querySelectorAll('.converter-section:not(.hidden):not(.completed) input');
@@ -312,9 +331,7 @@
                     const puzzleSection = activeInputs[0].closest('.converter-section');
                     const pairNumber = parseInt(puzzleSection.id.replace('puzzle', ''));
                     const checkBtn = puzzleSection.querySelector('.convert-btn');
-                    if (checkBtn) {
-                        checkBtn.click();
-                    }
+                    if (checkBtn) { checkBtn.click(); }
                 }
             }
         });

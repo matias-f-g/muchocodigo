@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El impostor - MUCHO CÓDIGO</title>
+    <meta name="description" content="El clásico juego del impostor">
+    <link rel="icon" type="image/png" href="../img/favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Para separar el título de lo que sigue */
+        h1 {
+            margin-bottom: 10rem;
+        }
+
+        /* ── Secciones de texto explicativo ── */
+        .explanation-section h2 {
+            margin-top: 0;
+        }
+        .explanation-section ul {
+            color: var(--text-light);
+            font-size: 1rem;
+            line-height: 1.8;
+            padding-left: 1.5rem;
+            margin: 0 0 1rem 0;
+        }
+
+        /* ── Panel del juego ── */
+        #game-panel {
+            display: none;
+            margin-top: 3rem;
+        }
+
+        /* ── Registro de jugadores ── */
+        .player-input-row {
+            display: flex;
+            flex-direction: column; /* ¡Esta es la magia! Apila los elementos en vertical (en renglones) */
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        /* Agregamos esto para que el botón se estire y ocupe todo el ancho del nuevo renglón */
+        .player-input-row button {
+            width: 100%;
+            box-sizing: border-box; /* Asegura que el padding no desborde el ancho */
+        }
+        .player-input-row input {
+            flex: 1;
+            padding: 10px 14px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            background: transparent;
+            border: 2px solid var(--border-medium);
+            color: var(--primary-green);
+            transition: border-color 0.3s;
+        }
+        .player-input-row input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: var(--glow-small);
+        }
+        .player-list {
+            margin: 20px 0;
+            min-height: 30px;
+        }
+        .player-tag {
+            display: inline-block;
+            border: 1px solid var(--secondary-green);
+            color: var(--secondary-green);
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+        }
+        .player-tag .remove-btn {
+            cursor: pointer;
+            margin-left: 8px;
+            color: var(--text-gray);
+        }
+        .player-tag .remove-btn:hover {
+            color: var(--primary-green);
+        }
+        .error-msg {
+            color: #ff9999;
+            font-size: 0.9rem;
+            margin-top: 6px;
+            min-height: 1.2em;
+        }
+
+        /* ── Pantalla de ronda (mostrar palabra) ── */
+        #round-screen {
+            display: none;
+        }
+        .round-overlay {
+            border: 2px solid var(--primary-green);
+            background-color: var(--bg-darker);
+            padding: 40px 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .round-overlay .player-name {
+            font-size: 1.6rem;
+            color: var(--primary-green);
+            text-shadow: var(--glow-medium);
+            margin-bottom: 8px;
+        }
+        .round-overlay .instruction {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+
+        /* ── Tarjeta de revelación ── */
+        .reveal-card {
+            display: none;
+            border: 2px solid var(--primary-green);
+            background-color: var(--bg-dark);
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+        .reveal-card .cat-label {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .reveal-card .cat-value {
+            font-size: 1.4rem;
+            color: var(--secondary-green);
+            margin-bottom: 20px;
+        }
+        .reveal-card .word-label {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .reveal-card .word-value {
+            font-size: 2rem;
+            color: var(--primary-green);
+            text-shadow: var(--glow-medium);
+        }
+        .reveal-card .impostor-note {
+            font-size: 1rem;
+            color: #ff9999;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Pantalla de votación ── */
+        #vote-screen {
+            display: none;
+        }
+        .vote-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .vote-btn {
+            padding: 14px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            background: transparent;
+            border: 2px solid var(--border-medium);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .vote-btn:hover, .vote-btn.selected {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            box-shadow: var(--glow-small);
+            background-color: var(--light-green);
+        }
+
+        /* ── Resultado de la ronda ── */
+        #result-screen {
+            display: none;
+        }
+        .result-box {
+            border: 2px solid var(--primary-green);
+            background-color: var(--bg-darker);
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .result-box .result-title {
+            font-size: 1.6rem;
+            text-shadow: var(--glow-medium);
+            margin-bottom: 10px;
+        }
+        .result-box .result-detail {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .result-box .result-detail strong {
+            color: var(--primary-green);
+        }
+
+        /* ── Tabla de puntajes ── */
+        .scores-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        .scores-table th {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-gray);
+            text-align: left;
+        }
+        .scores-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-gray);
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        .scores-table td.score-num {
+            color: var(--primary-green);
+            text-shadow: var(--glow-tiny);
+            font-size: 1.1rem;
+        }
+        .scores-table tr.leader td {
+            color: var(--primary-green);
+        }
+
+        /* ── Pantalla final ── */
+        #final-screen {
+            display: none;
+        }
+        .final-box {
+            border: 3px solid var(--primary-green);
+            background-color: var(--bg-darker);
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: var(--glow-large);
+        }
+        .final-box .winner-title {
+            font-size: 2rem;
+            text-shadow: var(--glow-large);
+            margin-bottom: 10px;
+        }
+        .final-box .winner-name {
+            font-size: 1.4rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        /* ── Indicador de ronda ── */
+        .round-indicator {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        /* ── Botones de acción secundaria ── */
+        .btn-sm {
+            font-family: inherit;
+            background: transparent;
+            border: 1px solid var(--border-medium);
+            color: var(--text-gray);
+            cursor: pointer;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-sm:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        /* ── Separador ── */
+        .section-sep {
+            border: none;
+            border-top: 1px solid var(--border-gray);
+            margin: 4rem 0;
+        }
+
+        /* ── Tutorial badge ── */
+        .badge {
+            display: inline-block;
+            background-color: var(--dark-green);
+            border: 1px solid var(--secondary-green);
+            color: var(--secondary-green);
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            margin-left: 8px;
+            vertical-align: middle;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* ── Bloques de secciones configurables ── */
+        .config-block {
+            margin-bottom: 2rem;
+        }
+        .config-block label {
+            display: block;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .config-block input[type="number"] {
+            width: 80px;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            background: transparent;
+            border: 2px solid var(--border-medium);
+            color: var(--primary-green);
+        }
+        .config-block input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        /* ── Screen transitions ── */
+        .screen { animation: fadeIn 0.3s ease; }
+    </style>
+</head>
+<body>
+    <a href="desafios.html" class="back-link">← Volver</a>
+    
+    <div class="container">
+        <h1>EL IMPOSTOR</h1>
+        
+        <div class="explanation-section">
+            <span class="close-btn" onclick="this.parentElement.style.display='none'">&times;</span>
+            <h2>¿Qué es esto?</h2>
+            <p class="text-content">El impostor es una especie de juego de mesa, que se juega con un celular (o una netbook), para al menos tres jugadores.</p>
+            <p class="text-content">La idea principal es así: en cada ronda, el programa elige una palabra aleatoria (la cual pertenece a una categoría). Por ejemplo, el programa elige la palabra "caballo", perteneciente a la categoría "animales". Todxs conocen la palabra, salvo uno, que será el impostor (el cual solo conoce la categoría), y debe intentar no ser descubierto.</p>
+        </div>
+
+        <div class="explanation-section">
+            <span class="close-btn" onclick="this.parentElement.style.display='none'">&times;</span>
+            <h2>¿Cómo se juega?</h2>
+            <p class="text-content">Primero, cada jugador anota su nombre.</p>
+            <p class="text-content">Luego, empiezan las rondas. Cada ronda tiene tres etapas:</p>
+            <ul>
+                <li>Cada jugador ve, individualmente, la palabra elegida para esa ronda (el programa le indicará cuándo). Todxs van a conocer la palabra y la categoría, excepto unx: el impostor, que sólo conocerá la categoría. En cada ronda, el impostor es elegido de forma aleatoria.</li>
+                <li>Cada jugador debe decir una palabra relacionada con la que salió, ¡pero sin decir esa misma palabra! Por ejemplo: si salió "caballo", podés decir "montura", "jinete", "caballero", etc., pero no "caballo".</li>
+                <li>Los jugadores debaten y votan al presunto impostor.</li>
+            </ul>
+            <p class="text-content">Si el impostor cumple su objetivo (o sea, si no es descubierto), suma un punto. Si no, todxs lxs demás suman un punto.</p>
+            <p class="text-content">El juego termina cuando los jugadores así lo deseen o cuando lleguen a la cantidad de rondas preestablecidas.</p>
+        </div>
+
+        <hr id="game-start-anchor" class="section-sep">
+
+        <!-- ══════════════════════════════════════════════════
+             REGISTRO DE JUGADORES
+        ════════════════════════════════════════════════════ -->
+        <div id="setup-screen" class="screen">
+            <h2>Registrar jugadores</h2>
+
+            <div class="player-input-row">
+                <input type="text" id="name-input" placeholder="Nombre del jugador..." maxlength="30" autocomplete="off">
+                <button class="btn" style="padding:10px 20px; font-size:1rem;" onclick="addPlayer()">Agregar</button>
+            </div>
+            <div id="error-msg" class="error-msg"></div>
+
+            <div class="player-list" id="player-list"></div>
+
+            <div class="config-block" style="margin-top:1.5rem;">
+                <label for="max-rounds-input">Cantidad de rondas (el máximo es 11):</label>
+                <input type="number" id="max-rounds-input" min="1" max="11" value="7">
+            </div>
+
+            <button class="btn" style="margin-top:1rem; padding:15px 30px; font-size:1.1rem; width:100%;" onclick="startGame()">▶ Empezar juego</button>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             RONDA — MOSTRAR PALABRA A CADA JUGADOR
+        ════════════════════════════════════════════════════ -->
+        <div id="round-screen" class="screen">
+            <div class="round-indicator" id="round-indicator"></div>
+            <h2 id="round-title">Ronda</h2>
+
+            <!-- Estado: esperando que el jugador actual presione "Ver" -->
+            <div id="show-prompt">
+                <div class="round-overlay">
+                    <div class="player-name" id="current-player-name"></div>
+                    <div class="instruction">Nadie puede estar mirando la pantalla, excepto vos.</div>
+                    <button class="btn" style="margin-top:10px; padding:14px 40px; font-size:1.1rem; width:100%;" onclick="revealWord()">Ver la palabra</button>
+                </div>
+            </div>
+
+            <!-- Estado: mostrando la palabra -->
+            <div id="reveal-card" class="reveal-card">
+                <div class="cat-label">Categoría</div>
+                <div class="cat-value" id="reveal-category"></div>
+                <div id="reveal-word-block">
+                    <div class="word-label">Palabra</div>
+                    <div class="word-value" id="reveal-word"></div>
+                </div>
+                <div id="reveal-impostor-note" class="impostor-note" style="display:none;">Sos el impostor. Solo conocés la categoría. ¡Disimulá!</div>
+                <br>
+                <button class="btn" style="margin-top:10px; padding:12px 30px; font-size:1rem; width:100%;" onclick="nextPlayer()">Listo ✓</button>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             DEBATE + VOTACIÓN
+        ════════════════════════════════════════════════════ -->
+        <div id="vote-screen" class="screen">
+            <div class="round-indicator" id="vote-round-indicator"></div>
+            <h2>¡A debatir!</h2>
+            <p class="text-content">Cada jugador dijo una palabra relacionada con la palabra seleccionada. Ahora deben debatir y votar al presunto impostor:</p>
+
+            <div class="vote-grid" id="vote-grid"></div>
+
+            <p class="text-content" style="font-size:0.9rem; color:var(--text-gray);">* Si no se pusieron de acuerdo, pueden saltear la votación.</p>
+            <button class="btn-sm" onclick="skipVote()" style="margin-bottom:1rem; width:100%;">Saltear votación</button>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             RESULTADO DE LA RONDA
+        ════════════════════════════════════════════════════ -->
+        <div id="result-screen" class="screen">
+            <div class="round-indicator" id="result-round-indicator"></div>
+            <h2>Resultado</h2>
+
+            <div class="result-box" id="result-box">
+                <div class="result-title" id="result-title"></div>
+                <div class="result-detail" id="result-detail"></div>
+            </div>
+
+            <h3>Puntajes</h3>
+            <table class="scores-table" id="scores-table">
+                <thead>
+                    <tr>
+                        <th>Jugador</th>
+                        <th>Puntos</th>
+                    </tr>
+                </thead>
+                <tbody id="scores-body"></tbody>
+            </table>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:1rem;">
+                <button class="btn" style="flex:1; padding:14px; font-size:1rem;" onclick="nextRound()">▶ Siguiente ronda</button>
+                <button class="btn-sm" style="flex:0 0 auto; padding:14px 20px;" onclick="endGame()">Finalizar juego</button>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             PANTALLA FINAL
+        ════════════════════════════════════════════════════ -->
+        <div id="final-screen" class="screen">
+            <h2>Juego terminado</h2>
+
+            <div class="final-box">
+                <div class="winner-title" id="final-winner-title">🏆 ¡Ganó!</div>
+                <div class="winner-name" id="final-winner-name"></div>
+            </div>
+
+            <h3>Puntajes finales</h3>
+            <table class="scores-table">
+                <thead>
+                    <tr><th>Jugador</th><th>Puntos</th></tr>
+                </thead>
+                <tbody id="final-scores-body"></tbody>
+            </table>
+
+            <p class="text-content" style="color:var(--text-gray); font-size:0.9rem;" id="rounds-played-label"></p>
+
+            <button class="btn" style="width:100%; padding:15px; font-size:1.1rem; margin-top:1rem;" onclick="resetAll()">↺ Nueva partida</button>
+        </div>
+
+        <hr class="section-sep">
+        
+        <div class="explanation-section">
+            <span class="close-btn" onclick="this.parentElement.style.display='none'">&times;</span>
+            <h2>¿Por qué lo hice?</h2>
+            <p class="text-content">Porque una vuelta estaba jugando a El impostor con mis amigxs, y el juego tuvo —a nuestro criterio— un par de fallas. En primer lugar, tenía la opción de darle una pista al impostor (cosa que inclinaba mucho la balanza a su favor); y en segundo lugar, se repetían las palabras que salían, y la persona a la cual le tocaba ser el impostor. Así que después de esa mala experiencia, decidí programar mi propia versión.</p>
+            <p class="text-content">El juego es muy sencillo, y el código también. Bueno, en realidad, la versión para PC (que se juega usando la terminal) es muy sencilla. Eso es lo que yo escribí, en Python. Para poder presentarlo en esta página web con una interfaz gráfica, tuve que traducirlo a HTML, JS y CSS, usando inteligencia artificial.</p>
+            <p class="text-content"><strong>El desafío es elegir otro juego similar y programarlo vos mismx, o inventar y programar tu propio juego desde cero</strong>.</p>
+        </div>
+
+    </div><!-- /container -->
+
+    <footer class="contact">
+        <p>Si te interesa el archivo original hecho en Python, podés <a href="../py/impostor.py" download>descargarlo aquí mismo</a> junto con su <a href="../csv/datos_impostor.csv" download>archivo csv</a>.</p>
+    </footer>
+
+    <script>
+    // ════════════════════════════════════════════════
+    // DATOS (equivalente al CSV — cargados directamente
+    // para no depender de fetch/CORS en file://)
+    // ════════════════════════════════════════════════
+    const CATEGORIAS = ["Lugares","Bandas","Actores/Actrices","Escritores","Figuras históricas","Películas/Sagas","Comidas/Bebidas"];
+    const ITEMS_CSV = [
+        ["Rusia","The Beatles","Ricardo Darín","Jorge Luis Borges","Jesús","2001: Odisea del espacio","Milanesas"],
+        ["Alemania","Sui Generis","Guillermo Francella","Edgar Allan Poe","Napoleón","Pulp Fiction","Empanadas"],
+        ["La Plata","Daft Punk","Leonardo DiCaprio","Homero","J. F. Kennedy","Memento","Asado"],
+        ["Montevideo","Radiohead","Brad Pitt","Miguel de Cervantes","J. D. Perón","Se7en: los siete pecados capitales","Cerveza"],
+        ["Los Ángeles","Queen","Uma Thurman","Stephen King","D. F. Sarmiento","Fight Club","Vino"],
+        ["Nueva York","Pink Floyd","Scarlett Johansson","Arthur Conan Doyle","San Martín","Kill Bill","Pizza"],
+        ["Nueva Zelanda","Led Zeppelin","Anne Hathaway","Kafka","Buda","Psycho (Psicosis)","Sorrentinos"],
+        ["París","Rammstein","Jennifer Aniston","Hermann Hesse","Colón","El Padrino","Vodka"],
+        ["Roma","Nirvana","Meryl Streep","Charles Dickens","Hitler","Harry Potter","Mate"],
+        ["África","Megadeth","Al Pacino","J. K. Rowling","Julio César","Jurassic Park","Locro"],
+        ["Cuba","Soda Stereo","Hugh Jackman","Agatha Christie","Maquiavelo","Red social","Panqueques"],
+        ["Groenlandia","Los Piojos","Johnny Depp","Julio Cortázar","Sócrates","El código enigma","Pollo"],
+        ["Japón","The Police","Leonardo Sbaraglia","Ray Bradbury","Isaac Newton","La vida es bella","Estofado"],
+    ];
+
+    // ════════════════════════════════════════════════
+    // ESTADO DEL JUEGO
+    // ════════════════════════════════════════════════
+    const MAX_RONDAS = 11;
+
+    let jugadores = [];       // [{nombre, puntos}]
+    let items = [];           // copia mutable de ITEMS_CSV (se van borrando)
+    let roundNum = 0;
+    let maxRounds = 11;
+
+    // Estado de ronda actual
+    let currentImpostor = null;
+    let currentCategoria = "";
+    let currentPalabra = "";
+    let currentPlayerIndex = 0;  // qué jugador está viendo ahora
+
+    // ════════════════════════════════════════════════
+    // UTILIDADES
+    // ════════════════════════════════════════════════
+    function $(id) { return document.getElementById(id); }
+
+    function showOnly(screenId, autoScroll = true) {
+        // ¡Acá agregamos "result-screen" que faltaba!
+        const screens = ["setup-screen", "round-screen", "vote-screen", "result-screen", "final-screen"];
+        
+        screens.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = (id === screenId) ? "block" : "none";
+        });
+
+        // Solo hacemos el salto si autoScroll es verdadero
+        if (autoScroll) {
+            setTimeout(scrollToGame, 50); 
+        }
+    }
+
+    function scrollToGame() {
+        const anchor = document.getElementById('game-start-anchor');
+        if (anchor) {
+            // scrollIntoView con 'smooth' hace que el movimiento no sea brusco
+            anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+
+    function randomChoice(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    // Elige una categoría no vacía y saca el item (igual que dameUnRandom en Python)
+    function dameUnRandom() {
+        let nonEmpty = items.map((col, i) => col.length > 0 ? i : -1).filter(i => i >= 0);
+        if (nonEmpty.length === 0) return null; // sin más palabras
+        let catIdx = randomChoice(nonEmpty);
+        let catName = CATEGORIAS[catIdx];
+        let wordList = items[catIdx];
+        let wordIdx = Math.floor(Math.random() * wordList.length);
+        let word = wordList[wordIdx];
+        wordList.splice(wordIdx, 1); // eliminar para que no repita
+        return { cat: catName, word };
+    }
+
+    // ════════════════════════════════════════════════
+    // REGISTRO DE JUGADORES
+    // ════════════════════════════════════════════════
+    function addPlayer() {
+        const input = $("name-input");
+        const nombre = input.value.trim();
+        const errorEl = $("error-msg");
+
+        if (!nombre) {
+            errorEl.textContent = "Ingresá un nombre.";
+            return;
+        }
+        const normalizado = nombre.split(" ").map(capitalize).join(" ");
+        if (jugadores.find(j => j.nombre.toLowerCase() === nombre.toLowerCase())) {
+            errorEl.textContent = "Ese nombre ya existe. Podés ingresar nombre y apellido para diferenciarlos.";
+            return;
+        }
+        if (jugadores.length >= 100) {
+            errorEl.textContent = "Máximo 100 jugadores.";
+            return;
+        }
+        errorEl.textContent = "";
+        jugadores.push({ nombre: normalizado, puntos: 0 });
+        input.value = "";
+        input.focus();
+        renderPlayerList();
+    }
+
+    function removePlayer(idx) {
+        jugadores.splice(idx, 1);
+        renderPlayerList();
+    }
+
+    function renderPlayerList() {
+        const list = $("player-list");
+        list.innerHTML = "";
+        jugadores.forEach((j, i) => {
+            const tag = document.createElement("span");
+            tag.className = "player-tag";
+            tag.innerHTML = `${j.nombre} <span class="remove-btn" onclick="removePlayer(${i})">✕</span>`;
+            list.appendChild(tag);
+        });
+    }
+
+    // Enter en el input agrega jugador
+    $("name-input").addEventListener("keydown", e => {
+        if (e.key === "Enter") addPlayer();
+    });
+
+    function startGame() {
+        if (jugadores.length < 3) {
+            $("error-msg").textContent = "Necesitás al menos 3 jugadores.";
+            return;
+        }
+        const mr = parseInt($("max-rounds-input").value);
+        maxRounds = (isNaN(mr) || mr < 1) ? 1 : (mr > MAX_RONDAS ? MAX_RONDAS : mr);
+
+        // Resetear puntos e items
+        jugadores.forEach(j => j.puntos = 0);
+        items = CATEGORIAS.map((_, colIdx) => ITEMS_CSV.map(row => row[colIdx]));
+        roundNum = 0;
+
+        startRound();
+    }
+
+    // ════════════════════════════════════════════════
+    // LÓGICA DE RONDA
+    // ════════════════════════════════════════════════
+    function startRound() {
+        roundNum++;
+
+        const resultado = dameUnRandom();
+        if (!resultado) {
+            // Se acabaron las palabras
+            endGame();
+            return;
+        }
+        currentCategoria = resultado.cat;
+        currentPalabra = resultado.word;
+        currentImpostor = randomChoice(jugadores);
+        currentPlayerIndex = 0;
+
+        $("round-title").textContent = `Ronda ${roundNum}`;
+        $("round-indicator").textContent = `Ronda ${roundNum} de ${maxRounds}`;
+        showOnly("round-screen");
+        showPlayerPrompt();
+    }
+
+    function showPlayerPrompt() {
+        const j = jugadores[currentPlayerIndex];
+        $("current-player-name").textContent = j.nombre;
+        $("show-prompt").style.display = "block";
+        $("reveal-card").style.display = "none";
+    }
+
+    function revealWord() {
+        const j = jugadores[currentPlayerIndex];
+        const esImpostor = j === currentImpostor;
+
+        $("reveal-category").textContent = currentCategoria;
+        if (esImpostor) {
+            $("reveal-word-block").style.display = "none";
+            $("reveal-impostor-note").style.display = "block";
+        } else {
+            $("reveal-word-block").style.display = "block";
+            $("reveal-word").textContent = currentPalabra;
+            $("reveal-impostor-note").style.display = "none";
+        }
+
+        $("show-prompt").style.display = "none";
+        $("reveal-card").style.display = "block";
+    }
+
+    function nextPlayer() {
+        currentPlayerIndex++;
+        if (currentPlayerIndex < jugadores.length) {
+            // Limpiar y mostrar siguiente
+            $("reveal-card").style.display = "none";
+            $("show-prompt").style.display = "block";
+            showPlayerPrompt();
+        } else {
+            // Todos vieron su palabra: ir a votación
+            showVoteScreen();
+        }
+    }
+
+    // ════════════════════════════════════════════════
+    // VOTACIÓN
+    // ════════════════════════════════════════════════
+    function showVoteScreen() {
+        $("vote-round-indicator").textContent = `Ronda ${roundNum} de ${maxRounds}`;
+        const grid = $("vote-grid");
+        grid.innerHTML = "";
+        jugadores.forEach((j, i) => {
+            const btn = document.createElement("button");
+            btn.className = "vote-btn";
+            btn.textContent = j.nombre;
+            btn.onclick = () => selectVote(i);
+            btn.dataset.idx = i;
+            grid.appendChild(btn);
+        });
+        showOnly("vote-screen");
+    }
+
+    let selectedVoteIdx = null;
+
+    function selectVote(idx) {
+        selectedVoteIdx = idx;
+        document.querySelectorAll(".vote-btn").forEach((b, i) => {
+            b.classList.toggle("selected", i === idx);
+        });
+        // Confirmar automáticamente después de 400ms para dar feedback visual
+        setTimeout(() => resolveRound(jugadores[idx]), 400);
+    }
+
+    function skipVote() {
+        // Sin votación: el impostor "ganó" (no fue descubierto)
+        resolveRound(null);
+    }
+
+    // ════════════════════════════════════════════════
+    // RESULTADO
+    // ════════════════════════════════════════════════
+    function resolveRound(votedPlayer) {
+        $("result-round-indicator").textContent = `Ronda ${roundNum} de ${maxRounds}`;
+
+        let impostorGano;
+        let titleText, detailHTML;
+
+        if (votedPlayer === null) {
+            // Saltear votación → impostor gana
+            impostorGano = true;
+            titleText = "Votación salteada";
+            detailHTML = `El impostor era <strong>${currentImpostor.nombre}</strong>. La palabra era <strong>${currentPalabra}</strong> (${currentCategoria}). Nadie votó, el impostor suma un punto.`;
+        } else if (votedPlayer === currentImpostor) {
+            impostorGano = false;
+            titleText = "¡Impostor descubierto!";
+            detailHTML = `Votaron correctamente a <strong>${currentImpostor.nombre}</strong>. La palabra era <strong>${currentPalabra}</strong> (${currentCategoria}). Todos los demás suman un punto.`;
+        } else {
+            impostorGano = true;
+            titleText = "El impostor se escapó";
+            detailHTML = `Votaron a <strong>${votedPlayer.nombre}</strong>, pero el impostor era <strong>${currentImpostor.nombre}</strong>. La palabra era <strong>${currentPalabra}</strong> (${currentCategoria}). El impostor suma un punto.`;
+        }
+
+        // Actualizar puntos
+        if (impostorGano) {
+            currentImpostor.puntos++;
+        } else {
+            jugadores.forEach(j => { if (j !== currentImpostor) j.puntos++; });
+        }
+
+        $("result-title").textContent = titleText;
+        $("result-detail").innerHTML = detailHTML;
+        renderScores("scores-body");
+
+        showOnly("result-screen");
+    }
+
+    function renderScores(tbodyId) {
+        const sorted = [...jugadores].sort((a, b) => b.puntos - a.puntos);
+        const maxPts = sorted[0].puntos;
+        const tbody = $(tbodyId);
+        tbody.innerHTML = "";
+        sorted.forEach(j => {
+            const tr = document.createElement("tr");
+            if (j.puntos === maxPts && maxPts > 0) tr.className = "leader";
+            tr.innerHTML = `<td>${j.nombre}</td><td class="score-num">${j.puntos}</td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function nextRound() {
+        if (roundNum >= maxRounds) {
+            endGame();
+        } else {
+            startRound();
+        }
+    }
+
+    // ════════════════════════════════════════════════
+    // FINAL
+    // ════════════════════════════════════════════════
+    function endGame() {
+        renderScores("final-scores-body");
+
+        const maxPts = Math.max(...jugadores.map(j => j.puntos));
+        const ganadores = jugadores.filter(j => j.puntos === maxPts);
+
+        if (ganadores.length === 1) {
+            $("final-winner-title").textContent = "🏆 ¡Ganó!";
+            $("final-winner-name").textContent = ganadores[0].nombre;
+        } else {
+            $("final-winner-title").textContent = "🏆 ¡Empate!";
+            $("final-winner-name").textContent = ganadores.map(g => g.nombre).join(", ");
+        }
+
+        $("rounds-played-label").textContent = `Rondas jugadas: ${roundNum}`;
+        showOnly("final-screen");
+    }
+
+    function resetAll() {
+        jugadores = [];
+        roundNum = 0;
+        renderPlayerList();
+        $("error-msg").textContent = "";
+        $("name-input").value = "";
+        $("max-rounds-input").value = "7";
+        showOnly("setup-screen");
+    }
+
+
+    // ════════════════════════════════════════════════
+    // INICIO
+    // ════════════════════════════════════════════════
+    showOnly("setup-screen", false);
+    </script>
+
+</body>
+</html>

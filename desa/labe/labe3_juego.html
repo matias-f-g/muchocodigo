@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape imperfecto - MUCHO CÓDIGO</title>
+    <meta name="description" content="El juego del laberinto">
+    <link rel="icon" type="image/png" href="../../img/favicon.png">
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+
+    <div class="labe-title">LABERINTOLOGÍA</div>
+
+    <nav class="labe-nav">
+        <a href="labe1_genesis.html"  >Génesis</a>
+        <a href="labe2_imprimir.html" >Para imprimir</a>
+        <a href="labe3_juego.html"    class="active">El juego</a>
+        <a href="labe4_ia.html"       >Inteligencia laberíntica</a>
+        <a href="labe5_archivos.html" >Archivos</a>
+        <a href="labe6_desafios.html" >Desafíos</a>
+    </nav>
+
+    <a href="../desafios.html" class="back-link back-link-labe">← Volver</a>
+
+    <div class="canvas-container" style="display: flex; flex-direction: column; align-items: center;">
+        <button id="btn-iniciar" class="btn" style="padding: 12px 30px; font-size: 1rem; margin-bottom: 1.5rem;" onclick="handleIniciar()">▶ Iniciar juego</button>
+        <canvas id="labeCanvas" width="1208" height="608" style="border: 1px solid var(--border-gray);"></canvas>
+    </div>
+
+    <script type="module">
+        import { iniciarJuego } from '../../js/laberinto3_Juego.js';
+
+        const canvas = document.getElementById('labeCanvas');
+        const btnIni = document.getElementById('btn-iniciar');
+
+        // Pintar el canvas de negro al cargar
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        window.handleIniciar = async function() {
+            btnIni.style.visibility = 'hidden';
+            await iniciarJuego(canvas);
+        };
+
+        // Evitar que las flechas hagan scroll en la página
+        window.addEventListener('keydown', function(e) {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+    </script>
+
+</body>
+</html>

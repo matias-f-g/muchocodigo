@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Génesis del laberinto - MUCHO CÓDIGO</title>
+    <meta name="description" content="Muestra cómo se generan los laberintos">
+    <link rel="icon" type="image/png" href="../../img/favicon.png">
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        h1 {
+            margin-top: 4rem;
+            margin-bottom: 8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="labe-title">LABERINTOLOGÍA</div>
+
+    <nav class="labe-nav">
+        <a href="labe1_genesis.html"  class="active">Génesis</a>
+        <a href="labe2_imprimir.html" >Para imprimir</a>
+        <a href="labe3_juego.html"    >El juego</a>
+        <a href="labe4_ia.html"       >Inteligencia laberíntica</a>
+        <a href="labe5_archivos.html" >Archivos</a>
+        <a href="labe6_desafios.html" >Desafíos</a>
+    </nav>
+
+    <a href="../desafios.html" class="back-link back-link-labe">← Volver</a>
+    
+    <div class="container">
+        <h1>GÉNESIS DEL LABERINTO</h1>
+
+        <p class="text-content">Hace mucho tiempo, recuerdo haber leído en algún libro (no recuerdo cuál) algo como:</p>
+
+        <div class="quote">
+            <div class="quote-text">«Si tenés una matriz, y vas conectando sus elementos de forma aleatoria, se genera un laberinto»</div>
+            <div class="quote-author">— Alguien (en algún año)</div>
+        </div>
+
+        <p class="text-content">Aunque no es una afirmación muy precisa ni explicativa, es bastante cierta, y te da una buena pista inicial para empezar a crear un algoritmo que genere laberintos.</p>
+
+        <p class="text-content">Después de algunos bocetos en papel, empecé a implementar un algoritmo bastante sencillo. La idea es así:</p>
+
+        <div style="margin-left: 40px;">
+            <p class="text-content">Hay una matriz, donde cada elemento es un cuadrado o cubículo. Cada cubículo puede tener o no algunas de sus cuatro paredes (arriba, abajo, izquierda o derecha). Si no tiene alguna de sus paredes, eso significa que hay una conexión con otro cubículo, es decir, que uno puede "caminar" de un cubículo a otro, ya que no está separado por ninguna pared.</p>
+            <p class="text-content">La conexión de un cubículo A a otro cubículo B se llama "salida", ya que uno puede "salir" de A y pasar a B. Naturalmente, lo que para uno (A) es una salida, para el otro (B) puede ser una entrada, pero para simplificar las cosas, en el código solo se habla de "salida".</p>
+            <p class="text-content">En principio, cada cubículo cuenta con las cuatro salidas (arriba, abajo, izquierda y derecha) como salidas posibles, pero mediante un proceso de selección, se van eliminando algunas opciones inválidas en base a dos restricciones:</p>
+            <ul class="text-list">
+                <li>Si hay una salida de A hacia B, se descarta la posibilidad de que haya una salida de B hacia A (para evitar repetir una conexión que ya existe).</li>
+                <li>Si un cubículo está en el borde de la matriz, no puede haber una salida hacia "afuera de la caja". Poniendo un ejemplo concreto: si hay un cubículo cuya pared de arriba pertenece al borde superior del laberinto, ese cubículo no puede tener una salida hacia arriba. Si no se cumpliera esta condición, el laberinto no tendría un perímetro definido.</li>
+            </ul>
+            <p class="text-content">Después de este proceso, nos queda el conjunto de las salidas posibles/válidas para un determinado cubículo. De ese conjunto, si no es vacío, elegimos (de forma aleatoria) exactamente una salida.</p>
+        </div>
+
+        <p class="text-content">Entonces, para generar el laberinto, simplemente hay que conectar de forma random los cubículos (cumpliendo con las restricciones mencionadas). En la presente implementación, eso se traduce en ir avanzando por la matriz y elegir, de forma random, una salida válida para cada cubículo.</p>
+
+        <p class="text-content">La idea empezaba a tomar forma, pero este fue el resultado:</p>
+
+        <div class="meme-container">
+            <img src="../../img/labResultado1.png" alt="Primer resultado del laberinto" class="meme-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="meme-placeholder" style="display: none;">[Imagen: labResultado1.png]</div>
+        </div>
+
+        <p class="text-content">Es decir, parece un laberinto, se ve bastante bien, pero está fragmentado, sectorizado: no se puede ir desde cualquier punto del laberinto a cualquier otro punto.</p>
+
+        <p class="text-content">Para lograr eso, mi primera (pésima) idea fue que cada cubículo pueda tener más de una salida.</p>
+
+        <p class="text-content">El resultado:</p>
+
+        <div class="meme-container">
+            <img src="../../img/labResultado2.png" alt="Segundo resultado del laberinto" class="meme-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="meme-placeholder" style="display: none;">[Imagen: labResultado2.png]</div>
+        </div>
+
+        <p class="text-content">Resolvía el problema anterior, pero generaba uno nuevo: ahora había muchos caminos posibles de un punto a otro. O sea: el laberinto perdía la gracia.</p>
+
+        <p class="text-content">Así que había que volver atrás, y pensar otra cosa.</p>
+
+        <p class="text-content">Una opción (perezosa) era generar el laberinto sectorizado y después eliminar algunas paredes de forma random. Con un poco de suerte es algo que puede funcionar, pero no resuelve realmente el problema.</p>
+
+        <p class="text-content">La otra opción, más correcta, era detectar los sectores, y abrir solamente una pared por sector, para conectarlos entre ellos. Suena fácil, pero no es tan sencillo de implementar. Por suerte, en ese momento vi <a href="https://youtu.be/WbzNRTTrX0g?si=CFgVHW3UEpeWHGLg" target="_blank" rel="noopener noreferrer">una clase sobre inteligencia artificial</a>, que si bien hablaba sobre cómo <i>resolver</i> laberintos, no sobre cómo <i>crearlos</i>, me ayudó a pensar cómo hacer el algoritmo que identifica los sectores.</p>
+
+        <p class="text-content">La idea es la siguiente:</p>
+
+        <div style="margin-left: 40px;">
+            <p class="text-content">Una vez esbozado el laberinto, cada cubículo tiene su número de sector en <i>None</i>.</p>
+            <p class="text-content">Por cada sector que se va a identificar, se crean dos listas: una tiene los cubículos ya procesados/analizados (llamada "ya_agregados"), y la otra almacena temporalmente los que se van a analizar (llamada "nuevos_miembros").</p>
+            <p class="text-content">Supongamos que empezamos por el primer cubículo (el de arriba a la izquierda). Le asignamos el número de sector 0, lo agregamos a "ya_agregados", y vemos si tiene vecinos (es decir, cubículos que estén a su lado y estén conectados, no separados por ninguna pared). Si tiene vecinos, los agregamos a "nuevos_miembros" y repetimos el mismo procesamiento con ellos, solo que ahora chequeamos dos cosas: que sean vecinos y que no estén en "ya_agregados". Seguimos repitiendo este proceso hasta que no haya más elementos en "nuevos_miembros"; lo cual sucederá cuando ya se haya identificado todo el sector.</p>
+            <p class="text-content">Si hacemos esto con todos los sectores, nos quedará un laberinto fragmentado, sí, pero con los sectores identificados y numerados.</p>
+        </div>
+
+        <p class="text-content">Hecho esto, solo resta elegir (de forma random) alguna de las paredes que conectan cada uno de los sectores, y listo: nos quedará un laberinto de un solo sector, tal como se puede observar en la siguiente imagen:</p>
+
+        <div class="meme-container">
+            <img src="../../img/labResultado3.png" alt="Tercer resultado del laberinto" class="meme-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="meme-placeholder" style="display: none;">[Imagen: labResultado3.png]</div>
+        </div>
+
+        <p class="text-content">Después de eso, pensé: ahora el laberinto puede esbozarse inicialmente de cualquier manera, total después el algoritmo de identificar y unir sectores se encarga de que todo quede bien. Así que armé distintos estilos (algunos más difíciles que otros).</p>
+
+        <p class="text-content">A continuación, se muestra cómo se generan, paso a paso, cinco tipos de laberintos:</p>
+
+    </div>
+
+    <!-- ANIMACIÓN DE GÉNESIS -->
+    <div class="canvas-container" style="display: flex; flex-direction: column; align-items: center;">
+        <button id="btn-iniciar" class="btn" style="padding: 12px 30px; font-size: 1rem; margin-bottom: 1.5rem;" onclick="handleIniciar()">▶ Iniciar animación</button>
+        <canvas id="labeCanvas" width="1008" height="508" style="border: 1px solid var(--border-gray);"></canvas>
+    </div>
+
+    <script type="module">
+        import { iniciarAnimacion } from '../../js/laberinto1_Genesis.js';
+
+        const canvas = document.getElementById('labeCanvas');
+        const btnIni = document.getElementById('btn-iniciar');
+
+        window.handleIniciar = async function() {
+            btnIni.style.visibility = 'hidden';
+            await iniciarAnimacion(canvas);
+        };
+
+        // Pintar el canvas de negro al cargar
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    </script>
+
+</body>
+</html>

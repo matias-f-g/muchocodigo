@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inteligencia laberíntica - MUCHO CÓDIGO</title>
+    <meta name="description" content="Cosas de IA en laberintos">
+    <link rel="icon" type="image/png" href="../../img/favicon.png">
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        h1 {
+            margin-top: 4rem;
+            margin-bottom: 8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="labe-title">LABERINTOLOGÍA</div>
+
+    <nav class="labe-nav">
+        <a href="labe1_genesis.html"  >Génesis</a>
+        <a href="labe2_imprimir.html" >Para imprimir</a>
+        <a href="labe3_juego.html"    >El juego</a>
+        <a href="labe4_ia.html"       class="active">Inteligencia laberíntica</a>
+        <a href="labe5_archivos.html" >Archivos</a>
+        <a href="labe6_desafios.html" >Desafíos</a>
+    </nav>
+
+    <a href="../desafios.html" class="back-link back-link-labe">← Volver</a>
+
+    
+    <div class="container">
+        <h1>INTELIGENCIA LABERÍNTICA</h1>
+
+        <p class="text-content">Jugar con laberintos puede parecer un pasatiempo atrapante, y completamente inútil. Pero lo cierto es que, además de ser muy atrapantes, los laberintos pueden ser grandes maestros, ya que resultan muy adecuados para aprender muchas cosas. En parte, porque representan de forma simplificada problemas espaciales de la vida real, como cuando uno quiere buscar un camino desde un punto A hasta otro punto B.</p>
+
+        <p class="text-content">Este tipo de problemas, que a veces se los llama problemas de búsqueda (donde lo que se busca es un camino o, quizás, el camino más corto), son ideales para introducirse en el mundo de la inteligencia artificial.</p>
+
+        <p class="text-content">Después de ver una clase sobre el tema (que podés encontrarla siguiendo <a href="https://youtu.be/WbzNRTTrX0g?si=CFgVHW3UEpeWHGLg" target="_blank" rel="noopener noreferrer">este link</a>), traté de armar justamente eso: un algoritmo que resuelva laberintos, es decir, que busque un camino de un punto a otro. En este caso, desde el punto inicial (arriba a la izquierda) hasta el punto final (representado por un cuadrado blanco).</p>
+
+        <p class="text-content">Para ello, tomé los algoritmos de búsqueda <i>depth-first search</i> (DFS) y <i>breadth-first search</i> (BFS), y los escribí a mi manera, de forma bastante artesanal, adaptados a los laberintos que ya tenía hechos.</p>
+
+        <p class="text-content">Lo que finalmente hice, fue un programa que representa de forma animada cómo funcionan los dos algoritmos, y que evidencia cuáles son las ventajas y las desventajas de cada uno:</p>
+         <div style="margin-left: 40px;">
+            <p class="text-content">Mientras que el DFS puede llegar a ser el más rápido, no necesariamente encuentra la mejor solución (es decir, no suele hallar el camino más corto).</p>
+            <p class="text-content">En cambio, el BFS, si bien suele ser más lento, siempre encuentra la mejor solución.</p>
+        </div>
+        
+        <p class="text-content">La idea es que todo eso pueda observarse en la animación. Allí se muestran cinco laberintos distintos, cada uno de los cuales se resuelve de dos maneras: primero con el algoritmo DFS y después con el BFS. Generalmente son laberintos con pocas paredes, para que la diferencia entre los algoritmos sea más notoria. Finalmente, después de cada laberinto, se presenta un cuadro comparativo con las "estadísticas" de cada algoritmo.</p>
+
+
+    </div>
+
+    <!-- ANIMACIÓN DE INTELIGENTE -->
+    <div class="canvas-container" style="display: flex; flex-direction: column; align-items: center;">
+        <button id="btn-iniciar" class="btn" style="padding: 12px 30px; font-size: 1rem; margin-bottom: 1.5rem;" onclick="handleIniciar()">▶ Iniciar animación</button>
+        <canvas id="labeCanvas" width="1008" height="608" style="border: 1px solid var(--border-gray);"></canvas>
+    </div>
+
+    <script type="module">
+        import { iniciarAnimacion } from '../../js/laberinto4_Inteligente.js';
+
+        const canvas = document.getElementById('labeCanvas');
+        const btnIni = document.getElementById('btn-iniciar');
+
+        window.handleIniciar = async function() {
+            btnIni.style.visibility = 'hidden';
+            await iniciarAnimacion(canvas);
+        };
+
+        // Pintar el canvas de negro al cargar
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    </script>
+
+
+</body>
+</html>
