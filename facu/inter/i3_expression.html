@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expression trees - MUCHO CÓDIGO</title>
+    <meta name="description" content="Árboles de expresión interactivos">
+    <link rel="icon" type="image/png" href="../../img/favicon.png">
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        #treeGraphCanvas:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="labe-title">ARBOLOGÍA</div>
+
+    <nav class="labe-nav">
+        <a href="i1_BST.html"         >Binary search tree</a>
+        <a href="i2_AVL.html"         >AVL tree</a>
+        <a href="i3_expression.html"  class="active">Expression trees</a>
+        <a href="i4_files.html"       >Original files</a>
+    </nav>
+
+    <a href="../facu.html" class="back-link back-link-labe">← Volver</a>
+
+    <div class="container"></div>
+
+    <div class="canvas-container" style="display: flex; flex-direction: column; align-items: center;">
+        <canvas id="treeGraphCanvas" width="1200" height="680" style="border: 1px solid var(--border-gray);"></canvas>
+    </div>
+
+    <script type="module">
+        import { iniciarAnimacionExpresiones } from '../../js/expression_trees.js';
+        iniciarAnimacionExpresiones();
+    </script>
+
+</body>
+</html>

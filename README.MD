@@ -18,9 +18,11 @@ Si bien el sitio web se encuentra disponible para cualquier ser humano, está pa
 
 ## <span style="color: #00aa00; font-size: 1.3em;">¿Por qué y cómo lo hice?</span>
 
-A lo largo de varios meses, fui escribiendo diversos programas, por distintas razones. Casi siempre en Pascal, porque es el lenguaje que estudiamos en el primer año de la carrera. Según el caso, buscaba más o menos documentación, pero para estas cosas nunca usé inteligencia artificial. Todos esos programas los hice de forma muy artesanal: por lo general la estrategia era traducir algoritmos que uno usa en la "vida real" al lenguaje de la compu. (Ah, y muchos están en inglés porque, nada, tenía ganas de practicar inglés).
+A lo largo de varios meses (del 2025), fui escribiendo diversos programas, por distintas razones. Casi siempre en Pascal, porque es el lenguaje que estudiamos en el primer año de la carrera. Según el caso, buscaba más o menos documentación, pero para estas cosas nunca usé inteligencia artificial. Todos esos programas los hice de forma muy artesanal: por lo general la estrategia era traducir algoritmos que uno usa en la "vida real" al lenguaje de la compu. (Ah, y muchos están en inglés porque, nada, tenía ganas de practicar inglés).
 
 Después pensé: estaría bueno compartirlos y que más gente pueda sumar programas parecidos. La cuestión era en dónde. Probablemente un repositorio en GitHub hubiera sido más profesional, pero el entorno no me parecía muy amigable. Por eso elegí hacer una página web, que es un formato súper accesible. La desventaja acá es que hay que laburar a pleno con HTML, CSS y JS. O sea: lenguajes que todavía no manejo bien. Pero tampoco fue tan grave: todo lo que tiene que ver con la estructura y el diseño de la página se lo encargué a la inteligencia artificial (principalmente usé Claude y ChatGPT). Básicamente le pedí que traduzca los programas que ya tenía hechos en Pascal a esos lenguajes más modernos, y fui supervisando el proceso para que no le sume muchos bugs en el camino.
+
+Ahora, en el 2026, la cosa sigue igual, pero el lenguaje base pasó a ser Python.
 
 
 ## <span style="color: #00aa00; font-size: 1.3em;">¿Cómo participar?</span>
