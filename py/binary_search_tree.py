@@ -305,7 +305,11 @@ def draw_edge(prev_node, node, update_and_wait=True):
 
 
 def create_tree():
-    """Welcome screen: collect numbers until Enter is pressed alone, then build the tree."""
+    """Welcome screen: collect numbers until Enter is pressed alone, then build the tree.
+    
+    This function was partially created with AI.
+    """
+
     DISPLAYSURF.fill(BACKGROUND_COLOR)
 
     title_font = pygame.font.Font('freesansbold.ttf', 40)
@@ -349,7 +353,11 @@ def create_tree():
 
 def gimmie_a_number(some_placeholder=None):
     """Blocks until the user types a number and presses Enter.
-    Returns an int, or None if the user pressed Enter with empty input."""
+
+    Returns an int, or None if the user pressed Enter with empty input.
+    This function was partially created with AI.
+    """
+
     input_str = ""
     input_font = pygame.font.Font('freesansbold.ttf', 36)
     box_rect = pygame.Rect(100, SCREEN_HEIGHT - 110, SREEN_WIDTH - 200, 60)
